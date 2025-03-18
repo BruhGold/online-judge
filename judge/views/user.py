@@ -133,18 +133,10 @@ class UserPage(TitleMixin, UserMixin, DetailView):
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
     extra_context = {'title': gettext_lazy('Login')}
-    authentication_form = CustomAuthenticationForm
-    redirect_authenticated_user = True
+    form_class = CustomAuthenticationForm
+    authentication_url = '/'
 
     def form_valid(self, form):
-        password = form.cleaned_data['password']
-        validator = PwnedPasswordsValidator()
-        try:
-            validator.validate(password)
-        except ValidationError:
-            self.request.session['password_pwned'] = True
-        else:
-            self.request.session['password_pwned'] = False
         return super().form_valid(form)
 
 

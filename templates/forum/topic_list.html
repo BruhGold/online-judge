@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}
+Heloo - Good night
+{% endblock %}
+{% block body %}
+<h2>Forum Topics</h2>
+<ul>
+    {% for topic in topics %}
+    <li>
+        <a href="{{ url('forum_topic_detail', pk=topic.pk) }}">{{ topic.title }}</a>
+        (by {{ topic.author.username }})
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{{ url('forum_new_topic') }}" class="btn btn-primary">Create New Topic</a>
+{% endblock %}

@@ -13,7 +13,7 @@ from judge.feed import AtomBlogFeed, AtomCommentFeed, AtomProblemFeed, BlogFeed,
 from judge.sitemap import sitemaps
 from judge.views import TitledTemplateView, api, blog, comment, contests, language, license, mailgun, organization, \
     preview, problem, problem_manage, ranked_submission, register, stats, status, submission, tasks, ticket, \
-    two_factor, user, widgets
+    two_factor, user, widgets, forum
 from judge.views.problem_data import ProblemDataView, ProblemSubmissionDiff, \
     problem_data_file, problem_init_view
 from judge.views.register import ActivationView, RegistrationView
@@ -22,6 +22,7 @@ from judge.views.select2 import AssigneeSelect2View, ClassSelect2View, CommentSe
     UserSearchSelect2View, UserSelect2View
 from judge.views.widgets import martor_image_uploader
 from martor.views import markdown_search_user
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 admin.autodiscover()
 
@@ -73,8 +74,8 @@ register_patterns = [
     path('2fa/webauthn/delete/<int:pk>', two_factor.WebAuthnDeleteView.as_view(), name='webauthn_delete'),
     path('2fa/scratchcode/generate/', user.generate_scratch_codes, name='generate_scratch_codes'),
 
-    path('api/token/generate/', user.generate_api_token, name='generate_api_token'),
-    path('api/token/remove/', user.remove_api_token, name='remove_api_token'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 
@@ -253,6 +254,11 @@ urlpatterns = [
 
         path('/', lambda _, pk, slug: HttpResponsePermanentRedirect(reverse('organization_home', args=[pk, slug]))),
     ])),
+
+    path("forum/", forum.ForumTopicListView.as_view(), name="forum_topic_list"),  # Show topics in a forum
+    path("forum/<int:pk>/", forum.ForumTopicDetailView.as_view(), name="forum_topic_detail"),  # Show detail topics
+    path("forum/new-topic/", forum.ForumTopicCreateView.as_view(), name="forum_new_topic"),  # Create a new topic
+    path("forum/<int:pk>/new-post", forum.ForumTopicPostCreateView.as_view(), name="forum_new_post"),  # Create new post in topic
 
     path('runtimes/', language.LanguageList.as_view(), name='runtime_list'),
     path('runtimes/matrix/', status.version_matrix, name='version_matrix'),

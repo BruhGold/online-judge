@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h2>Reply to: {{ topic.title }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="content">Your Comment:</label>
+    <textarea name="content" required></textarea>
+
+    <button type="submit" class="btn btn-success">Post Comment</button>
+</form>
+{% endblock %}
