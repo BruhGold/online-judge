@@ -14,10 +14,9 @@ from judge.utils.diggpaginator import DiggPaginator
 from judge.utils.opengraph import generate_opengraph
 from judge.utils.tickets import filter_visible_tickets
 from judge.utils.views import TitleMixin
-from rest_framework.views import APIView
 
 
-class PostList(APIView,ListView):
+class PostList(ListView):
     model = BlogPost
     paginate_by = 10
     context_object_name = 'posts'

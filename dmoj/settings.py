@@ -278,13 +278,10 @@ INSTALLED_APPS += (
     'django_jinja',
     'martor',
     'adminsortable2',
-    'corsheaders',
 )
 
 MIDDLEWARE = (
     'judge.middleware.ShortCircuitMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -626,6 +623,3 @@ if DMOJ_PDF_PDFOID_URL:
 # Compute these values after local_settings.py is loaded
 ACE_DEFAULT_LIGHT_THEME = DMOJ_THEME_DEFAULT_ACE_THEME['light']
 ACE_DEFAULT_DARK_THEME = DMOJ_THEME_DEFAULT_ACE_THEME['dark']
-
-
-CORS_ALLOW_ALL_ORIGINS = True

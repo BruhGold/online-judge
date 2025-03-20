@@ -94,21 +94,5 @@
         },
         "model": "judge.navigationbar",
         "pk": 7
-    },
-    {
-        "fields": {
-            "key": "forum",
-            "label": "Forum",
-            "level": 0,
-            "lft": 1,
-            "order": 7,
-            "parent": null,
-            "path": "/forum/",
-            "regex": "^/forum",
-            "rght": 2,
-            "tree_id": 6
-        },
-        "model": "judge.navigationbar",
-        "pk": 8
     }
 ]
