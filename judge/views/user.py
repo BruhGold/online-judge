@@ -73,61 +73,97 @@ class UserPage(TitleMixin, UserMixin, DetailView):
             return self.request.profile
         return super(UserPage, self).get_object(queryset)
 
-    def dispatch(self, request, *args, **kwargs):
-        if self.kwargs.get(self.slug_url_kwarg, None) is None:
-            if not self.request.user.is_authenticated:
-                return redirect_to_login(self.request.get_full_path())
-        try:
-            return super(UserPage, self).dispatch(request, *args, **kwargs)
-        except Http404:
-            return generic_message(request, _('No such user'), _('No user handle "%s".') %
-                                   self.kwargs.get(self.slug_url_kwarg, None), status=404)
-
-    def get_title(self):
-        return (_('My account') if self.request.user == self.object.user else
-                _('User %s') % self.object.display_name)
-
-    # TODO: the same code exists in problem.py, maybe move to problems.py?
-    @cached_property
-    def profile(self):
+def dispatch(self, request, *args, **kwargs):
+    if self.kwargs.get(self.slug_url_kwarg, None) is None:
         if not self.request.user.is_authenticated:
-            return None
-        return self.request.profile
+            return redirect_to_login(self.request.get_full_path())
+    try:
+        return super(UserPage, self).dispatch(request, *args, **kwargs)
+    except Http404:
+        return generic_message(request, _('No such user'), _('No user handle "%s".') %
+                               self.kwargs.get(self.slug_url_kwarg, None), status=404)
 
-    @cached_property
-    def in_contest(self):
-        return self.profile is not None and self.profile.current_contest is not None
+def get_title(self):
+    return (_('My account') if self.request.user == self.object.user else
+            _('User %s') % self.object.display_name)
 
-    def get_completed_problems(self):
-        if self.in_contest:
-            return contest_completed_ids(self.profile.current_contest)
-        else:
-            return user_completed_ids(self.profile) if self.profile is not None else ()
+@cached_property
+def profile(self):
+    if not self.request.user.is_authenticated:
+        return None
+    return self.request.profile
 
-    def get_context_data(self, **kwargs):
-        context = super(UserPage, self).get_context_data(**kwargs)
+@cached_property
+def in_contest(self):
+    return self.profile is not None and self.profile.current_contest is not None
 
-        context['hide_solved'] = int(self.hide_solved)
-        context['authored'] = self.object.authored_problems.filter(is_public=True, is_organization_private=False) \
-                                  .select_related('group').order_by('code')
-        rating = self.object.ratings.order_by('-contest__end_time')[:1]
-        context['rating'] = rating[0] if rating else None
+def get_completed_problems(self):
+    if self.in_contest:
+        return contest_completed_ids(self.profile.current_contest)
+    else:
+        return user_completed_ids(self.profile) if self.profile is not None else ()
 
-        context['rank'] = Profile.objects.filter(
-            is_unlisted=False, performance_points__gt=self.object.performance_points,
-        ).exclude(id=self.object.id).count() + 1
+def fetch_submission_data(self):
+    import requests
 
-        if rating:
-            context['rating_rank'] = Profile.objects.filter(
-                is_unlisted=False, rating__gt=self.object.rating,
-            ).count() + 1
-        context.update(self.object.ratings.aggregate(min_rating=Min('rating'), max_rating=Max('rating'),
-                                                     contests=Count('contest')))
-        return context
+    username = self.object.user.username
+    url = f'https://dmoj.ca/api/v2/submissions?user={username}'
+    response = requests.get(url)
+    
+    if response.status_code != 200:
+        return 0, 0  # Return 0 instead of None to prevent errors in the template
 
-    def get(self, request, *args, **kwargs):
-        self.hide_solved = request.GET.get('hide_solved') == '1' if 'hide_solved' in request.GET else False
-        return super(UserPage, self).get(request, *args, **kwargs)
+    data = response.json()
+    submissions = data.get("data", {}).get("objects", [])
+    total_submissions = len(submissions)
+
+    accepted_count = 0
+    problem_attempts = {}
+
+    for submission in submissions:
+        problem = submission.get("problem")
+        if submission.get("result") == "AC":
+            accepted_count += 1
+        if problem:
+            problem_attempts[problem] = problem_attempts.get(problem, 0) + 1
+
+    unique_problems = len(problem_attempts)
+    avg_attempts = round(total_submissions / unique_problems, 2) if unique_problems > 0 else 0
+    success_rate = round((accepted_count / total_submissions) * 100, 2) if total_submissions > 0 else 0
+
+    return success_rate, avg_attempts
+
+
+def get_context_data(self, **kwargs):
+    context = super(UserPage, self).get_context_data(**kwargs)
+
+    context['hide_solved'] = int(self.hide_solved)
+    context['authored'] = self.object.authored_problems.filter(is_public=True, is_organization_private=False) \
+                              .select_related('group').order_by('code')
+    rating = self.object.ratings.order_by('-contest__end_time')[:1]
+    context['rating'] = rating[0] if rating else None
+
+    context['rank'] = Profile.objects.filter(
+        is_unlisted=False, performance_points__gt=self.object.performance_points,
+    ).exclude(id=self.object.id).count() + 1
+
+    if rating:
+        context['rating_rank'] = Profile.objects.filter(
+            is_unlisted=False, rating__gt=self.object.rating,
+        ).count() + 1
+    context.update(self.object.ratings.aggregate(min_rating=Min('rating'), max_rating=Max('rating'),
+                                                 contests=Count('contest')))
+    
+    # Fetch success rate and average submission attempts
+    success_rate, avg_attempts = self.fetch_submission_data()
+    context['success_rate'] = success_rate
+    context['average_attempts'] = avg_attempts
+
+    return context
+
+def get(self, request, *args, **kwargs):
+    self.hide_solved = request.GET.get('hide_solved') == '1' if 'hide_solved' in request.GET else False
+    return super(UserPage, self).get(request, *args, **kwargs)
 
 
 class CustomLoginView(LoginView):
@@ -164,14 +200,20 @@ class UserAboutPage(UserPage):
 
     def get_context_data(self, **kwargs):
         context = super(UserAboutPage, self).get_context_data(**kwargs)
-        ratings = context['ratings'] = self.object.ratings.order_by('-contest__end_time').select_related('contest') \
-            .defer('contest__description')
+        user = self.object  # Get the current user object
+
+        # Ensure success_rate and average_attempts default to 0 if None
+        context['success_rate'] = user.profile.success_rate if hasattr(user, 'profile') and user.profile.success_rate is not None else 0
+        context['average_attempts'] = user.profile.average_attempts if hasattr(user, 'profile') and user.profile.average_attempts is not None else 0
+
+        # Keep existing logic
+        ratings = context['ratings'] = user.ratings.order_by('-contest__end_time').select_related('contest').defer('contest__description')
 
         context['rating_data'] = mark_safe(json.dumps([{
             'label': rating.contest.name,
             'rating': rating.rating,
             'ranking': rating.rank,
-            'link': '%s#!%s' % (reverse('contest_ranking', args=(rating.contest.key,)), self.object.user.username),
+            'link': '%s#!%s' % (reverse('contest_ranking', args=(rating.contest.key,)), user.username),
             'timestamp': (rating.contest.end_time - EPOCH).total_seconds() * 1000,
             'date': date_format(timezone.localtime(rating.contest.end_time), _('M j, Y, G:i')),
             'class': rating_class(rating.rating),
@@ -179,7 +221,7 @@ class UserAboutPage(UserPage):
         } for rating in ratings]))
 
         submissions = (
-            self.object.submission_set
+            user.submission_set
             .annotate(date_only=TruncDate('date'))
             .values('date_only').annotate(cnt=Count('id'))
         )
@@ -189,12 +231,14 @@ class UserAboutPage(UserPage):
         }))
         context['submission_metadata'] = mark_safe(json.dumps({
             'min_year': (
-                self.object.submission_set
+                user.submission_set
                 .annotate(year_only=ExtractYear('date'))
                 .aggregate(min_year=Min('year_only'))['min_year']
             ),
         }))
+
         return context
+
 
 
 class UserProblemsPage(UserPage):
