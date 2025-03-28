@@ -22,6 +22,9 @@ from judge.views.select2 import AssigneeSelect2View, ClassSelect2View, CommentSe
     UserSearchSelect2View, UserSelect2View
 from judge.views.widgets import martor_image_uploader
 from martor.views import markdown_search_user
+from django.urls import path
+from .api import LoginAPIView
+
 
 admin.autodiscover()
 
@@ -92,6 +95,7 @@ def paged_list_view(view, name):
 
 
 urlpatterns = [
+    path('api/login/', LoginAPIView.as_view(), name='api-login'),
     path('', blog.PostList.as_view(template_name='home.html', title=_('Home')), kwargs={'page': 1}, name='home'),
     path('500/', exception),
     path('admin/', admin.site.urls),
@@ -259,6 +263,7 @@ urlpatterns = [
     path('status/', status.status_all, name='status_all'),
 
     path('api/v2/', include([
+        path('login/', api.api_v2.LoginAPIView.as_view(), name='api-login'),
         path('contests', api.api_v2.APIContestList.as_view()),
         path('contest/<str:contest>', api.api_v2.APIContestDetail.as_view()),
         path('problems', api.api_v2.APIProblemList.as_view()),

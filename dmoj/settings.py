@@ -166,7 +166,14 @@ DMOJ_CANONICAL = ''
 
 # Application definition
 
-INSTALLED_APPS = ()
+
+INSTALLED_APPS =()
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Access token expires in 60 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Refresh token expires in 1 day
+}
 
 try:
     import wpadmin
@@ -278,7 +285,16 @@ INSTALLED_APPS += (
     'django_jinja',
     'martor',
     'adminsortable2',
+    'rest_framework',  # Add DRF
+    'rest_framework_simplejwt',  # Add Simple JWT
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Use JWT for authentication
+        'rest_framework.authentication.SessionAuthentication',  # Use session-based authentication
+    ],
+}
 
 MIDDLEWARE = (
     'judge.middleware.ShortCircuitMiddleware',
