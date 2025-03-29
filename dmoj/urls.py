@@ -22,8 +22,6 @@ from judge.views.select2 import AssigneeSelect2View, ClassSelect2View, CommentSe
     UserSearchSelect2View, UserSelect2View
 from judge.views.widgets import martor_image_uploader
 from martor.views import markdown_search_user
-from django.urls import path
-from .api import LoginAPIView
 
 
 admin.autodiscover()

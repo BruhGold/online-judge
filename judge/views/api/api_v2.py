@@ -18,19 +18,6 @@ from judge.utils.raw_sql import join_sql_subquery, use_straight_join
 from judge.views.submission import group_test_cases
 
 
-from django.contrib.auth import authenticate, login
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import serializers
-from django.contrib.auth.models import User
-from rest_framework.permissions import IsAuthenticated
-from judge.models import Submission 
-from rest_framework_simplejwt.tokens import RefreshToken  
-from rest_framework.test import APIClient
-from django.test import TestCase
-
-
 
 
 class BaseSimpleFilter:
