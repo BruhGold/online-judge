@@ -260,7 +260,6 @@ urlpatterns = [
     path('status/', status.status_all, name='status_all'),
 
     path('api/v2/', include([
-        path('login/', api.api_v2.LoginAPIView.as_view(), name='api-login'),
         path('contests', api.api_v2.APIContestList.as_view()),
         path('contest/<str:contest>', api.api_v2.APIContestDetail.as_view()),
         path('problems', api.api_v2.APIProblemList.as_view()),
