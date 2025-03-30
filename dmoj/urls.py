@@ -24,6 +24,7 @@ from judge.views.widgets import martor_image_uploader
 from martor.views import markdown_search_user
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
 
+
 admin.autodiscover()
 
 register_patterns = [
