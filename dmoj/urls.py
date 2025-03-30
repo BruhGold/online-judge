@@ -22,6 +22,8 @@ from judge.views.select2 import AssigneeSelect2View, ClassSelect2View, CommentSe
     UserSearchSelect2View, UserSelect2View
 from judge.views.widgets import martor_image_uploader
 from martor.views import markdown_search_user
+from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
+
 
 admin.autodiscover()
 
@@ -258,6 +260,8 @@ urlpatterns = [
     path('runtimes/matrix/', status.version_matrix, name='version_matrix'),
     path('status/', status.status_all, name='status_all'),
 
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v2/', include([
         path('contests', api.api_v2.APIContestList.as_view()),
         path('contest/<str:contest>', api.api_v2.APIContestDetail.as_view()),

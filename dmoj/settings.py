@@ -166,7 +166,9 @@ DMOJ_CANONICAL = ''
 
 # Application definition
 
-INSTALLED_APPS = ()
+
+INSTALLED_APPS =()
+
 
 try:
     import wpadmin
@@ -279,6 +281,7 @@ INSTALLED_APPS += (
     'martor',
     'adminsortable2',
 )
+
 
 MIDDLEWARE = (
     'judge.middleware.ShortCircuitMiddleware',

@@ -155,12 +155,10 @@
 
             $('#new-webauthn').click(event => {
                 event.preventDefault();
-
                 if (typeof window.PublicKeyCredential === 'undefined') {
                     alert({{ _('WebAuthn is not supported by your browser.')|htmltojs }});
                     return;
                 }
-
                 $.getJSON('{{ url('webauthn_attest') }}')
                     .done(publicKey => {
                         decodeJSONBytes(publicKey);
