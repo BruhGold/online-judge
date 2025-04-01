@@ -1,1 +1,1 @@
-from .problem import APIProblemCreateView
+from .problem import *

@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 from judge.models.problem import Problem
 
 class CanEditProblem(BasePermission):
@@ -7,7 +7,10 @@ class CanEditProblem(BasePermission):
     
 class CanCreateProblem(BasePermission):
     def has_permission(self, request, view):
-
-        if request.user.has_perm("judge.create_problem"):
+        if request.method in SAFE_METHODS:
             return True
+        elif request.method == "POST":
+            if request.user.has_perm("judge.add_problem"):
+                return True
+            return False
         return False

@@ -261,9 +261,8 @@ urlpatterns = [
     path('api/v2/', include([
         path('contests', api.api_v2.APIContestList.as_view()),
         path('contest/<str:contest>', api.api_v2.APIContestDetail.as_view()),
-        path('problems', api.api_v2.APIProblemList.as_view()),
-        path('problems/create', api.custom_apis.APIProblemCreateView.as_view()),
-        path('problem/<str:problem>', api.api_v2.APIProblemDetail.as_view()),
+        path('problems', api.custom_apis.APIProblemListView.as_view()),
+        path('problem/<str:problem>', api.custom_apis.APIProblemDetailView.as_view()),
         path('users', api.api_v2.APIUserList.as_view()),
         path('user/<str:user>', api.api_v2.APIUserDetail.as_view()),
         path('submissions', api.api_v2.APISubmissionList.as_view()),
