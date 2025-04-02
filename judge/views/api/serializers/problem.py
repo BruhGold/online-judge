@@ -18,7 +18,7 @@ class ProblemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, data):
-        request = self.context['request']
-        if not data.get('is_public', True) and not request.user.has_perm('judge.create_private_problem'):
+        user = self.context['user']
+        if not data.get('is_public', True) and not user.has_perm('judge.create_private_problem'):
             raise serializers.ValidationError("You don't have permission to create private problems.")
         return data
