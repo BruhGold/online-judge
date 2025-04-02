@@ -3,6 +3,7 @@ import binascii
 import itertools
 import json
 import os
+import requests
 from datetime import datetime
 from operator import attrgetter, itemgetter
 
@@ -87,7 +88,6 @@ class UserPage(TitleMixin, UserMixin, DetailView):
         return (_('My account') if self.request.user == self.object.user else
                 _('User %s') % self.object.display_name)
 
-    # TODO: the same code exists in problem.py, maybe move to problems.py?
     @cached_property
     def profile(self):
         if not self.request.user.is_authenticated:
@@ -107,27 +107,49 @@ class UserPage(TitleMixin, UserMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(UserPage, self).get_context_data(**kwargs)
 
-        context['hide_solved'] = int(self.hide_solved)
-        context['authored'] = self.object.authored_problems.filter(is_public=True, is_organization_private=False) \
-                                  .select_related('group').order_by('code')
-        rating = self.object.ratings.order_by('-contest__end_time')[:1]
-        context['rating'] = rating[0] if rating else None
+        # Fetch all submissions data from the Submissions API
+        submissions_api_url = 'http://192.168.64.14:8000/api/v2/submissions'
+        response = requests.get(submissions_api_url)
 
-        context['rank'] = Profile.objects.filter(
-            is_unlisted=False, performance_points__gt=self.object.performance_points,
-        ).exclude(id=self.object.id).count() + 1
+        if response.status_code == 200:
+            submissions_data = response.json()
 
-        if rating:
-            context['rating_rank'] = Profile.objects.filter(
-                is_unlisted=False, rating__gt=self.object.rating,
-            ).count() + 1
-        context.update(self.object.ratings.aggregate(min_rating=Min('rating'), max_rating=Max('rating'),
-                                                     contests=Count('contest')))
+            # Extract submission information
+            submissions = submissions_data.get('data', {}).get('objects', [])
+            
+            # Filter the submissions for the current user
+            user_submissions = [submission for submission in submissions if submission['user'] == self.object.username]
+
+            # Calculate total submissions, successful submissions, and distinct problems attempted
+            total_submissions = len(user_submissions)
+            successful_submissions = sum(1 for submission in user_submissions if submission['result'] == 'AC')
+
+            # Find distinct problems attempted (even failed submissions)
+            distinct_problems_attempted = len(set(submission['problem'] for submission in user_submissions))
+
+            # Calculate success rate and average attempts
+            success_rate = (successful_submissions / total_submissions) * 100 if total_submissions > 0 else 0
+            success_rate = round(success_rate, 2)
+            avg_attempts = total_submissions / distinct_problems_attempted if distinct_problems_attempted > 0 else 0
+
+            # Add the calculated values to the context
+            context['user_success_rate'] = success_rate
+            context['user_avg_attempts'] = avg_attempts
+        else:
+            context['user_success_rate'] = 0
+            context['user_avg_attempts'] = 0
+            print(f"Error fetching submissions data: {response.status_code}")
+
+        # Add other context as usual
+        context['rating'] = self.object.ratings.order_by('-contest__end_time')[:1] or None
         return context
+
+
 
     def get(self, request, *args, **kwargs):
         self.hide_solved = request.GET.get('hide_solved') == '1' if 'hide_solved' in request.GET else False
         return super(UserPage, self).get(request, *args, **kwargs)
+
 
 
 class CustomLoginView(LoginView):
