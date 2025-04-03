@@ -166,7 +166,9 @@ DMOJ_CANONICAL = ''
 
 # Application definition
 
-INSTALLED_APPS = ()
+
+INSTALLED_APPS =()
+
 
 try:
     import wpadmin
@@ -280,12 +282,12 @@ INSTALLED_APPS += (
     'adminsortable2',
 )
 
+
 MIDDLEWARE = (
     'judge.middleware.ShortCircuitMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'judge.middleware.APIMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'judge.middleware.MiscConfigMiddleware',

@@ -22,6 +22,8 @@ from judge.views.select2 import AssigneeSelect2View, ClassSelect2View, CommentSe
     UserSearchSelect2View, UserSelect2View
 from judge.views.widgets import martor_image_uploader
 from martor.views import markdown_search_user
+from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
+
 
 admin.autodiscover()
 
@@ -72,9 +74,6 @@ register_patterns = [
     path('2fa/webauthn/assert/', two_factor.WebAuthnAttestView.as_view(), name='webauthn_assert'),
     path('2fa/webauthn/delete/<int:pk>', two_factor.WebAuthnDeleteView.as_view(), name='webauthn_delete'),
     path('2fa/scratchcode/generate/', user.generate_scratch_codes, name='generate_scratch_codes'),
-
-    path('api/token/generate/', user.generate_api_token, name='generate_api_token'),
-    path('api/token/remove/', user.remove_api_token, name='remove_api_token'),
 ]
 
 
@@ -258,11 +257,13 @@ urlpatterns = [
     path('runtimes/matrix/', status.version_matrix, name='version_matrix'),
     path('status/', status.status_all, name='status_all'),
 
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v2/', include([
         path('contests', api.api_v2.APIContestList.as_view()),
         path('contest/<str:contest>', api.api_v2.APIContestDetail.as_view()),
-        path('problems', api.api_v2.APIProblemList.as_view()),
-        path('problem/<str:problem>', api.api_v2.APIProblemDetail.as_view()),
+        path('problems', api.custom_apis.APIProblemListView.as_view()),
+        path('problem/<str:problem>', api.custom_apis.APIProblemDetailView.as_view()),
         path('users', api.api_v2.APIUserList.as_view()),
         path('user/<str:user>', api.api_v2.APIUserDetail.as_view()),
         path('submissions', api.api_v2.APISubmissionList.as_view()),
