@@ -4,6 +4,7 @@ from rest_framework import status
 from django.db import IntegrityError
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from ..serializers.problem import ProblemSerializer
+from judge.models.problem_data import ProblemData
 from ..permissions.problem import *
 import judge.views.api.api_v2 as api_v2
 
@@ -26,6 +27,7 @@ class APIProblemListView(APIView, api_v2.APIProblemList):
         if serializer.is_valid():
             try:
                 problem = serializer.save()
+                ProblemData.objects.create(problem=problem)
                 return Response(ProblemSerializer(problem).data, status=status.HTTP_201_CREATED)
             except IntegrityError as e:
                 return Response(
@@ -33,7 +35,7 @@ class APIProblemListView(APIView, api_v2.APIProblemList):
                     status=status.HTTP_400_BAD_REQUEST
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
 class APIProblemDetailView(APIView, api_v2.APIProblemDetail):
     permission_classes = [IsAuthenticatedOrReadOnly, CanDeleteProblem, CanEditProblem]
     

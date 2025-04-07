@@ -263,6 +263,7 @@ urlpatterns = [
         path('contest/<str:contest>', api.api_v2.APIContestDetail.as_view()),
         path('problems', api.custom_apis.APIProblemListView.as_view()),
         path('problem/<str:problem>', api.custom_apis.APIProblemDetailView.as_view()),
+        path('problem/<str:problem>/test_data', api.custom_apis.APIProblemDataView.as_view()),
         path('users', api.api_v2.APIUserList.as_view()),
         path('user/<str:user>', api.api_v2.APIUserDetail.as_view()),
         path('submissions', api.api_v2.APISubmissionList.as_view()),
