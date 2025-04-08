@@ -98,3 +98,105 @@ INFO 2025-04-02 09:23:14,509 judge_handler Test1: Grading has begun on: 7
 INFO 2025-04-02 09:23:14,579 judge_handler Test1: 1 test case(s) completed on: 7
 INFO 2025-04-02 09:23:14,663 judge_handler Test1: Grading has ended on: 7
 INFO 2025-04-02 09:23:14,670 judge_list Judge available after grading 7: Test1
+INFO 2025-04-07 10:23:53,217 judge_handler Judge connected from: ('172.17.0.2', 46626)
+INFO 2025-04-07 10:23:53,243 judge_handler Judge disconnected from: ('172.17.0.2', 46626) with name None
+INFO 2025-04-07 10:24:53,286 judge_handler Judge connected from: ('172.17.0.2', 48542)
+INFO 2025-04-07 10:24:53,303 judge_handler Judge disconnected from: ('172.17.0.2', 48542) with name None
+INFO 2025-04-07 10:25:53,372 judge_handler Judge connected from: ('172.17.0.2', 36298)
+INFO 2025-04-07 10:25:53,393 judge_handler Judge disconnected from: ('172.17.0.2', 36298) with name None
+INFO 2025-04-07 10:26:53,413 judge_handler Judge connected from: ('172.17.0.2', 33990)
+INFO 2025-04-07 10:26:53,432 judge_handler Judge disconnected from: ('172.17.0.2', 33990) with name None
+INFO 2025-04-07 10:27:53,465 judge_handler Judge connected from: ('172.17.0.2', 55320)
+INFO 2025-04-07 10:27:53,479 judge_handler Judge disconnected from: ('172.17.0.2', 55320) with name None
+INFO 2025-04-07 10:28:53,578 judge_handler Judge connected from: ('172.17.0.2', 51454)
+INFO 2025-04-07 10:28:53,592 judge_handler Judge disconnected from: ('172.17.0.2', 51454) with name None
+INFO 2025-04-07 10:29:53,613 judge_handler Judge connected from: ('172.17.0.2', 43812)
+INFO 2025-04-07 10:29:53,627 judge_handler Judge disconnected from: ('172.17.0.2', 43812) with name None
+INFO 2025-04-07 10:30:53,646 judge_handler Judge connected from: ('172.17.0.2', 41616)
+INFO 2025-04-07 10:30:53,661 judge_handler Judge disconnected from: ('172.17.0.2', 41616) with name None
+INFO 2025-04-07 10:31:53,686 judge_handler Judge connected from: ('172.17.0.2', 52336)
+INFO 2025-04-07 10:31:53,696 judge_handler Judge disconnected from: ('172.17.0.2', 52336) with name None
+INFO 2025-04-07 10:32:53,714 judge_handler Judge connected from: ('172.17.0.2', 44182)
+INFO 2025-04-07 10:32:53,731 judge_handler Judge disconnected from: ('172.17.0.2', 44182) with name None
+INFO 2025-04-07 10:33:04,522 daemon Exiting due to SIGINT
+INFO 2025-04-07 10:33:53,802 judge_handler Judge connected from: ('172.17.0.2', 43754)
+INFO 2025-04-07 10:33:53,819 judge_handler Judge disconnected from: ('172.17.0.2', 43754) with name None
+INFO 2025-04-07 10:34:53,847 judge_handler Judge connected from: ('172.17.0.2', 55472)
+INFO 2025-04-07 10:34:53,868 judge_handler Judge disconnected from: ('172.17.0.2', 55472) with name None
+INFO 2025-04-07 10:35:53,908 judge_handler Judge connected from: ('172.17.0.2', 54874)
+INFO 2025-04-07 10:35:53,931 judge_handler Judge disconnected from: ('172.17.0.2', 54874) with name None
+INFO 2025-04-07 10:36:53,970 judge_handler Judge connected from: ('172.17.0.2', 46464)
+INFO 2025-04-07 10:36:53,987 judge_handler Judge disconnected from: ('172.17.0.2', 46464) with name None
+INFO 2025-04-07 10:37:54,037 judge_handler Judge connected from: ('172.17.0.2', 51652)
+INFO 2025-04-07 10:37:54,063 judge_handler Judge disconnected from: ('172.17.0.2', 51652) with name None
+INFO 2025-04-07 10:38:54,111 judge_handler Judge connected from: ('172.17.0.2', 38980)
+INFO 2025-04-07 10:38:54,126 judge_handler Judge disconnected from: ('172.17.0.2', 38980) with name None
+INFO 2025-04-07 10:39:18,377 daemon Exiting due to SIGINT
+INFO 2025-04-07 10:45:54,643 judge_handler Judge connected from: ('172.17.0.2', 50400)
+INFO 2025-04-07 10:45:54,663 judge_handler Judge disconnected from: ('172.17.0.2', 50400) with name None
+INFO 2025-04-07 10:46:54,686 judge_handler Judge connected from: ('172.17.0.2', 42692)
+INFO 2025-04-07 10:46:54,695 judge_handler Judge authenticated: ('172.17.0.2', 42692) (Test1)
+INFO 2025-04-07 10:46:54,699 judge_list Minimum tier changed from None to 1
+INFO 2025-04-07 11:30:16,297 judge_list Minimum tier changed from 1 to None
+INFO 2025-04-07 11:30:16,331 judge_handler Judge disconnected from: ('172.17.0.2', 42692) with name Test1
+INFO 2025-04-07 11:31:23,545 judge_handler Judge connected from: ('172.17.0.2', 44408)
+INFO 2025-04-07 11:31:23,570 judge_handler Judge authenticated: ('172.17.0.2', 44408) (Test1)
+INFO 2025-04-07 11:31:23,574 judge_list Minimum tier changed from None to 1
+INFO 2025-04-07 11:39:37,813 judge_list Minimum tier changed from 1 to None
+INFO 2025-04-07 11:39:37,833 judge_handler Judge disconnected from: ('172.17.0.2', 44408) with name Test1
+INFO 2025-04-07 11:40:40,419 judge_handler Judge connected from: ('172.17.0.2', 40776)
+INFO 2025-04-07 11:40:40,433 judge_handler Judge authenticated: ('172.17.0.2', 40776) (Test1)
+INFO 2025-04-07 11:40:40,436 judge_list Minimum tier changed from None to 1
+INFO 2025-04-07 11:41:19,849 judge_list Minimum tier changed from 1 to None
+INFO 2025-04-07 11:41:19,863 judge_handler Judge disconnected from: ('172.17.0.2', 40776) with name Test1
+INFO 2025-04-07 11:42:11,422 judge_handler Judge connected from: ('172.17.0.2', 52932)
+INFO 2025-04-07 11:42:11,436 judge_handler Judge authenticated: ('172.17.0.2', 52932) (Test1)
+INFO 2025-04-07 11:42:11,440 judge_list Minimum tier changed from None to 1
+INFO 2025-04-07 11:50:12,808 daemon Exiting due to SIGINT
+INFO 2025-04-07 11:51:42,957 daemon Exiting due to SIGINT
+INFO 2025-04-07 11:54:01,770 judge_handler Judge connected from: ('172.17.0.2', 34786)
+INFO 2025-04-07 11:54:01,783 judge_handler Judge authenticated: ('172.17.0.2', 34786) (Test1)
+INFO 2025-04-07 11:54:01,786 judge_list Minimum tier changed from None to 1
+INFO 2025-04-07 12:20:22,719 judge_handler Test1: Updated problem list
+INFO 2025-04-07 12:36:25,268 judge_handler Test1: Updated problem list
+INFO 2025-04-07 13:23:47,398 judge_list Specified judge Test1 is available
+INFO 2025-04-07 13:23:47,424 judge_list Dispatched submission 1 to: Test1
+INFO 2025-04-07 13:23:47,601 judge_handler Submission acknowledged: 1
+INFO 2025-04-07 13:23:53,629 judge_handler Test1: Submission generated compiler messages: 1
+INFO 2025-04-07 13:23:53,640 judge_handler Test1: Grading has begun on: 1
+INFO 2025-04-07 13:23:53,689 judge_handler Test1: 1 test case(s) completed on: 1
+INFO 2025-04-07 13:23:53,710 judge_handler Test1: Grading has ended on: 1
+INFO 2025-04-07 13:23:53,715 judge_list Judge available after grading 1: Test1
+INFO 2025-04-08 05:04:32,991 judge_list Specified judge Test1 is available
+INFO 2025-04-08 05:04:33,022 judge_list Dispatched submission 2 to: Test1
+INFO 2025-04-08 05:04:33,193 judge_handler Submission acknowledged: 2
+INFO 2025-04-08 05:04:41,155 judge_handler Test1: Submission generated compiler messages: 2
+INFO 2025-04-08 05:04:41,172 judge_handler Test1: Grading has begun on: 2
+INFO 2025-04-08 05:04:41,240 judge_handler Test1: 1 test case(s) completed on: 2
+INFO 2025-04-08 05:04:41,272 judge_handler Test1: Grading has ended on: 2
+INFO 2025-04-08 05:04:41,279 judge_list Judge available after grading 2: Test1
+INFO 2025-04-08 05:09:28,393 judge_list Specified judge Test1 is available
+INFO 2025-04-08 05:09:28,399 judge_list Dispatched submission 3 to: Test1
+INFO 2025-04-08 05:09:28,424 judge_handler Submission acknowledged: 3
+INFO 2025-04-08 05:09:29,369 judge_handler Test1: Submission failed to compile: 3
+INFO 2025-04-08 05:09:29,374 judge_list Judge available after grading 3: Test1
+INFO 2025-04-08 05:10:18,256 judge_list Specified judge Test1 is available
+INFO 2025-04-08 05:10:18,260 judge_list Dispatched submission 4 to: Test1
+INFO 2025-04-08 05:10:18,291 judge_handler Submission acknowledged: 4
+INFO 2025-04-08 05:10:23,985 judge_handler Test1: Submission generated compiler messages: 4
+INFO 2025-04-08 05:10:23,999 judge_handler Test1: Grading has begun on: 4
+INFO 2025-04-08 05:10:24,033 judge_handler Test1: 1 test case(s) completed on: 4
+INFO 2025-04-08 05:10:24,050 judge_handler Test1: Grading has ended on: 4
+INFO 2025-04-08 05:10:24,055 judge_list Judge available after grading 4: Test1
+INFO 2025-04-08 06:32:25,544 judge_list Specified judge Test1 is available
+INFO 2025-04-08 06:32:25,548 judge_list Dispatched submission 5 to: Test1
+INFO 2025-04-08 06:32:25,569 judge_handler Submission acknowledged: 5
+INFO 2025-04-08 06:32:33,145 judge_handler Test1: Submission generated compiler messages: 5
+INFO 2025-04-08 06:32:33,158 judge_handler Test1: Grading has begun on: 5
+INFO 2025-04-08 06:32:33,201 judge_handler Test1: 1 test case(s) completed on: 5
+INFO 2025-04-08 06:32:33,224 judge_handler Test1: Grading has ended on: 5
+INFO 2025-04-08 06:32:33,233 judge_list Judge available after grading 5: Test1
+INFO 2025-04-08 06:54:36,392 daemon Exiting due to SIGINT
+INFO 2025-04-08 06:55:05,618 judge_handler Judge connected from: ('172.17.0.2', 51024)
+INFO 2025-04-08 06:55:05,666 judge_handler Judge authenticated: ('172.17.0.2', 51024) (Test1)
+INFO 2025-04-08 06:55:05,672 judge_list Minimum tier changed from None to 1

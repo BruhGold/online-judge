@@ -89,8 +89,24 @@ block title_row %} {% set tab = 'about' %} {% include "user/user-tabs.html" %}
       <span class="rating"></span>, #<span class="rank"></span>
     </div>
   </div>
+
   {% endif %}
+
+  <div class="box box-default">
+    <div class="box-header with-border">
+      <h3 class="box-title">User Performance by Problem Type</h3>
+    </div>
+    <div class="box-body">
+      <canvas
+        id="problemTypeChart"
+        width="250"
+        height="100"
+        style="margin-top: 20px"
+      ></canvas>
+    </div>
+  </div>
 </div>
+
 {% endblock %} {% block bodyend %} {% if REQUIRE_JAX %} {% include
 "mathjax-load.html" %} {% endif %}
 
@@ -284,6 +300,9 @@ block title_row %} {% set tab = 'about' %} {% include "user/user-tabs.html" %}
           }
       });
 
+
+
+
       $canvas.click(function (evt) {
           var elements = window.rating_chart.getElementsAtEvent(evt);
           if (elements.length > 0) {
@@ -302,4 +321,78 @@ block title_row %} {% set tab = 'about' %} {% include "user/user-tabs.html" %}
       });
   });
 </script>
-{% endif %} {% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="performance-data" type="application/json">
+  {{ type_performance_data | safe }}
+</script>
+
+<canvas id="problemTypeChart" width="400" height="600"></canvas>
+
+<script>
+  const performanceData = JSON.parse(
+    document.getElementById("performance-data").textContent
+  );
+
+  const labels = Object.keys(performanceData);
+  const acData = labels.map((label) => performanceData[label].AC);
+  const nonAcData = labels.map((label) => performanceData[label].nonAC);
+
+  const ctx = document.getElementById("problemTypeChart").getContext("2d");
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Accepted (AC)",
+          data: acData,
+          backgroundColor: "rgba(0, 200, 83, 0.8)", // green
+          borderWidth: 1,
+        },
+        {
+          label: "Other (WA, TLE, etc.)",
+          data: nonAcData,
+          backgroundColor: "rgba(244, 67, 54, 0.8)", // red
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      indexAxis: "y", // horizontal bars
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: "white" },
+        },
+        tooltip: {
+          mode: "index",
+          intersect: false,
+        },
+      },
+      scales: {
+        x: {
+          stacked: true,
+          beginAtZero: true,
+          ticks: {
+            color: "white",
+            stepSize: 1, // only show whole numbers
+            precision: 0, // no decimal places
+          },
+          grid: {
+            color: "rgba(255, 255, 255, 0.1)",
+          },
+        },
+
+        y: {
+          stacked: true,
+          ticks: { color: "white" },
+          grid: { color: "rgba(255, 255, 255, 0.1)" },
+        },
+      },
+    },
+  });
+</script>
+
+{% endblock %}

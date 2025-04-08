@@ -6,6 +6,7 @@ import os
 import requests
 from datetime import datetime
 from operator import attrgetter, itemgetter
+from collections import defaultdict
 
 from django.conf import settings
 from django.contrib.auth import logout as auth_logout
@@ -47,6 +48,8 @@ from judge.utils.subscription import Subscription
 from judge.utils.unicode import utf8text
 from judge.utils.views import DiggPaginatorMixin, QueryStringSortMixin, TitleMixin, add_file_response, generic_message
 from .contests import ContestRanking
+from judge.models.problem import Problem
+
 
 __all__ = ['UserPage', 'UserAboutPage', 'UserProblemsPage', 'UserDownloadData', 'UserPrepareData',
            'users', 'edit_profile']
@@ -108,7 +111,7 @@ class UserPage(TitleMixin, UserMixin, DetailView):
         context = super(UserPage, self).get_context_data(**kwargs)
 
         # Fetch all submissions data from the Submissions API
-        submissions_api_url = 'http://192.168.64.14:8000/api/v2/submissions'
+        submissions_api_url = 'http://192.168.64.18:8000/api/v2/submissions'
         response = requests.get(submissions_api_url)
 
         if response.status_code == 200:
@@ -185,7 +188,10 @@ class UserAboutPage(UserPage):
     template_name = 'user/user-about.html'
 
     def get_context_data(self, **kwargs):
+        print('DEBUG: UserAboutPage.get_context_data triggered')
         context = super(UserAboutPage, self).get_context_data(**kwargs)
+
+        # Contest rating data
         ratings = context['ratings'] = self.object.ratings.order_by('-contest__end_time').select_related('contest') \
             .defer('contest__description')
 
@@ -200,12 +206,12 @@ class UserAboutPage(UserPage):
             'height': '%.3fem' % rating_progress(rating.rating),
         } for rating in ratings]))
 
+        # Submission data for heatmap
         submissions = (
             self.object.submission_set
             .annotate(date_only=TruncDate('date'))
             .values('date_only').annotate(cnt=Count('id'))
         )
-
         context['submission_data'] = mark_safe(json.dumps({
             date_counts['date_only'].isoformat(): date_counts['cnt'] for date_counts in submissions
         }))
@@ -216,7 +222,47 @@ class UserAboutPage(UserPage):
                 .aggregate(min_year=Min('year_only'))['min_year']
             ),
         }))
+
+        # ➕ User performance by problem type
+        # ➕ User performance by problem type (for attempted problems, not just solved)
+        all_submissions = self.object.submission_set.values('problem', 'result')
+        print('DEBUG all_submissions:', list(all_submissions))
+
+        attempted_problem_codes = {
+            s['problem'] for s in all_submissions
+        }
+        print('DEBUG attempted_problem_codes:', attempted_problem_codes)
+
+
+        problems = Problem.objects.filter(id__in=attempted_problem_codes).prefetch_related('types')
+
+        print('DEBUG matched problems:', problems)
+
+        type_stats = {}
+
+        for submission in all_submissions:
+            problem_id = submission['problem']
+            result = submission['result']
+            try:
+                problem = Problem.objects.get(pk=problem_id)
+                for t in problem.types.all():
+                    type_name = t.full_name
+                    if type_name not in type_stats:
+                        type_stats[type_name] = {'AC': 0, 'nonAC': 0}
+                    if result == 'AC':
+                        type_stats[type_name]['AC'] += 1
+                    else:
+                        type_stats[type_name]['nonAC'] += 1
+            except Problem.DoesNotExist:
+                continue  # Skip missing problems
+
+        print('DEBUG type_data:', type_stats)
+        context['type_performance_data'] = mark_safe(json.dumps(type_stats))
+
+
+
         return context
+
 
 
 class UserProblemsPage(UserPage):
