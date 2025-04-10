@@ -57,4 +57,4 @@ class APIProblemDetailView(APIView, api_v2.APIProblemDetail):
         problem = self.get_object()
         self.check_object_permissions(request, problem)
         problem.delete()
-        return Response({"detail": "Problem deleted successfully."},status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
