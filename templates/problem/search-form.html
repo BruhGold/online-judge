@@ -1,6 +1,5 @@
 <div class="sidebox">
-    <h3>{{ _('Problem search') }} <i class="fa fa-search"></i>
-    </h3>
+    <h3>{{ _('Problem search') }} <i class="fa fa-search"></i></h3>
     <div class="sidebox-content">
         <form id="filter-form" name="form" action="" method="get">
             <div>
@@ -37,13 +36,23 @@
                     {% if category %}
                         <option value="" selected="selected">{{ _('All') }}</option>
                     {% else %}
-                        <option value="">{{ _('All') }}</option>{% endif %}
+                        <option value="">{{ _('All') }}</option>
+                    {% endif %}
                     <option disabled="disabled">---</option>
                     {% for group in categories %}
                         <option value="{{ group.id }}"{% if group.id == category %} selected{% endif %}>
                             {{ group.full_name }}
                         </option>
                     {% endfor %}
+                </select>
+            </div>
+            <div class="filter-form-group">
+                <label for="difficulty"><i>{{ _('Difficulty') }}</i></label>
+                <select id="difficulty" name="difficulty">
+                    <option value="" {% if request.GET.difficulty == "" %}selected{% endif %}>{{ _('All') }}</option>
+                    <option value="easy" {% if request.GET.difficulty == "easy" %}selected{% endif %}>{{ _('Easy') }}</option>
+                    <option value="medium" {% if request.GET.difficulty == "medium" %}selected{% endif %}>{{ _('Medium') }}</option>
+                    <option value="hard" {% if request.GET.difficulty == "hard" %}selected{% endif %}>{{ _('Hard') }}</option>
                 </select>
             </div>
             {% if show_types %}

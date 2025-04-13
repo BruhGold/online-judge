@@ -55,6 +55,11 @@ class ProblemGroup(models.Model):
         verbose_name = _('problem group')
         verbose_name_plural = _('problem groups')
 
+class Difficulty(models.Model):
+    name = models.CharField(max_length=20, unique=True)
+    slug = models.SlugField(max_length=20, unique=True)
+    def __str__(self):
+        return self.name
 
 class License(models.Model):
     key = models.CharField(max_length=20, unique=True, verbose_name=_('key'),
@@ -113,7 +118,13 @@ class Problem(models.Model):
         (SubmissionSourceAccess.SOLVED, _('Visible if problem solved')),
         (SubmissionSourceAccess.ONLY_OWN, _('Only own submissions')),
     )
-
+    DIFFICULTY_CHOICES = [
+        ('easy', 'Easy'),
+        ('medium', 'Medium'),
+        ('hard', 'Hard'),
+    ]
+    difficulty = models.CharField(max_length=10,verbose_name=_('problem difficulty'), choices=DIFFICULTY_CHOICES, default='easy',
+                            help_text=_('The problem difficulty level'))
     code = models.CharField(max_length=20, verbose_name=_('problem code'), unique=True,
                             validators=[RegexValidator('^[a-z0-9]+$', _('Problem code must be ^[a-z0-9]+$'))],
                             help_text=_('A short, unique code for the problem, used in the URL after /problem/'))
@@ -172,6 +183,7 @@ class Problem(models.Model):
     submission_source_visibility_mode = models.CharField(verbose_name=_('submission source visibility'), max_length=1,
                                                          default=SubmissionSourceAccess.FOLLOW,
                                                          choices=SUBMISSION_SOURCE_ACCESS)
+
 
     objects = TranslatedProblemQuerySet.as_manager()
     tickets = GenericRelation('Ticket')

@@ -15,15 +15,14 @@ resources/select2-dmoj.css
 resources/style.css
 resources/vars.scss
 sass_processed
-
+<desired bridge log path>
+node_modules/
+package-lock.json
 # Python virtual environments
 venv/
 dmojsite/
-
 # Bytecode cache
 __pycache__/
 *.py[cod]
-
 # Environment
 .env
-

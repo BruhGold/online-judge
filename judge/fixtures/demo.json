@@ -29,22 +29,104 @@
             "date_joined": "2017-12-02T08:34:17.408Z",
             "email": "",
             "first_name": "",
-            "groups": [
-
-            ],
+            "groups": [],
             "is_active": true,
             "is_staff": true,
             "is_superuser": true,
             "last_login": "2017-12-02T08:34:31.840Z",
             "last_name": "",
             "password": "pbkdf2_sha256$36000$eFRRZq4DgktS$md1gk0bBJb7PH/+3YEXkcCW8K+KmiI+y/amqR32G2DY=",
-            "user_permissions": [
-
-            ],
+            "user_permissions": [],
             "username": "admin"
         },
         "model": "auth.user",
         "pk": 1
+    },
+    {
+        "fields": {
+            "date_joined": "2017-12-02T09:00:00.000Z",
+            "email": "",
+            "first_name": "Basic",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2017-12-02T09:05:00.000Z",
+            "last_name": "User1",
+            "password": "pbkdf2_sha256$600000$SaltySALT$taR0VU1K0mIi1cwp2HI+cgW8n2V6YcM64G0WqxbrZLQ=",
+            "user_permissions": [],
+            "username": "basicuser1"
+        },
+        "model": "auth.user",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "about": "I am a basic user.",
+            "ace_theme": "github",
+            "current_contest": null,
+            "display_rank": "user",
+            "ip": "10.0.2.3",
+            "language": 1,
+            "last_access": "2017-12-02T09:10:00.000Z",
+            "math_engine": "auto",
+            "mute": false,
+            "organizations": [
+                1
+            ],
+            "performance_points": 0.0,
+            "points": 0.0,
+            "problem_count": 0,
+            "rating": null,
+            "timezone": "America/Toronto",
+            "user": 2,
+            "user_script": ""
+        },
+        "model": "judge.profile",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "date_joined": "2017-12-02T09:15:00.000Z",
+            "email": "",
+            "first_name": "Basic",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2017-12-02T09:20:00.000Z",
+            "last_name": "User2",
+            "password": "pbkdf2_sha256$600000$SaltierSALT$KNI4n6blztY5Jz9LaXEzPTAqtt6hK/RRQ1hC9kYDgvg=",
+            "user_permissions": [],
+            "username": "basicuser2"
+        },
+        "model": "auth.user",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "about": "Another basic user.",
+            "ace_theme": "github",
+            "current_contest": null,
+            "display_rank": "user",
+            "ip": "10.0.2.4",
+            "language": 1,
+            "last_access": "2017-12-02T09:25:00.000Z",
+            "math_engine": "auto",
+            "mute": false,
+            "organizations": [
+                1
+            ],
+            "performance_points": 0.0,
+            "points": 0.0,
+            "problem_count": 0,
+            "rating": null,
+            "timezone": "America/Toronto",
+            "user": 3,
+            "user_script": ""
+        },
+        "model": "judge.profile",
+        "pk": 3
     },
     {
         "fields": {
@@ -95,13 +177,9 @@
             "authors": [
                 1
             ],
-            "banned_users": [
-
-            ],
+            "banned_users": [],
             "code": "aplusb",
-            "curators": [
-
-            ],
+            "curators": [],
             "date": "2017-12-02T05:00:00Z",
             "description": "Tudor is sitting in math class, on his laptop. Clearly, he is not paying attention in this situation. However, he gets called on by his math teacher to do some problems. Since his math teacher did not expect much from Tudor, he only needs to do some simple addition problems. However, simple for you and I may not be simple for Tudor, so please help him!\n\n## Input Specification\n\nThe first line will contain an integer ~N~ (~1 \\le N \\le 100\\,000~), the number of addition problems Tudor needs to do. The next ~N~ lines will each contain two space-separated integers whose absolute value is less than ~1\\,000\\,000\\,000~, the two integers Tudor needs to add.\n\n## Output Specification\n\nOutput ~N~ lines of one integer each, the solutions to the addition problems in order.\n\n## Sample Input\n\n    2\n    1 1\n    -1 0\n\n## Sample Output\n\n    2\n    -1",
             "group": 1,
@@ -115,9 +193,7 @@
             "points": 5.0,
             "short_circuit": false,
             "summary": "",
-            "testers": [
-
-            ],
+            "testers": [],
             "time_limit": 2.0,
             "types": [
                 1
@@ -126,6 +202,132 @@
         },
         "model": "judge.problem",
         "pk": 1
+    },
+    {
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [],
+            "code": "aminusb",
+            "curators": [],
+            "date": "2017-12-02T05:00:00Z",
+            "description": "Tudor is still in math class, but now he has to do subtraction problems.\n\n## Input Specification\n\nThe first line will contain an integer ~N~ (~1 \\le N \\le 100\\,000~), the number of subtraction problems Tudor needs to do. The next ~N~ lines will each contain two space-separated integers whose absolute value is less than ~1\\,000\\,000\\,000~, the two integers Tudor needs to subtract.\n\n## Output Specification\n\nOutput ~N~ lines of one integer each, the solutions to the subtraction problems in order.\n\n## Sample Input\n\n    2\n    3 1\n    0 2\n\n## Sample Output\n\n    2\n    -2",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "A Minus B",
+            "og_image": "",
+            "partial": true,
+            "points": 5.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [],
+            "code": "amultiplyb",
+            "curators": [],
+            "date": "2017-12-02T05:00:00Z",
+            "description": "Tudor now has to solve multiplication problems in math class.\n\n## Input Specification\n\nThe first line will contain an integer ~N~ (~1 \\le N \\le 100\\,000~), the number of multiplication problems Tudor needs to do. The next ~N~ lines will each contain two space-separated integers whose absolute value is less than ~1\\,000\\,000\\,000~, the two integers Tudor needs to multiply.\n\n## Output Specification\n\nOutput ~N~ lines of one integer each, the solutions to the multiplication problems in order.\n\n## Sample Input\n\n    2\n    2 3\n    -1 4\n\n## Sample Output\n\n    6\n    -4",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "A Multiply B",
+            "og_image": "",
+            "partial": true,
+            "points": 5.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [],
+            "code": "adivb",
+            "curators": [],
+            "date": "2017-12-02T05:00:00Z",
+            "description": "Now, Tudor has to solve division problems in math class.\n\n## Input Specification\n\nThe first line will contain an integer ~N~ (~1 \\le N \\le 100\\,000~), the number of division problems Tudor needs to do. The next ~N~ lines will each contain two space-separated integers whose absolute value is less than ~1\\,000\\,000\\,000~, the two integers Tudor needs to divide. The second integer will never be zero.\n\n## Output Specification\n\nOutput ~N~ lines of one integer each, the solutions to the division problems in order (integer division).\n\n## Sample Input\n\n    2\n    6 2\n    5 2\n\n## Sample Output\n\n    3\n    2",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "A Div B",
+            "og_image": "",
+            "partial": true,
+            "points": 5.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 4
     },
     {
         "fields": {
@@ -163,10 +365,42 @@
     },
     {
         "fields": {
-            "domain": "localhost:8081",
+            "domain": "localhost:4000",
             "name": "DMOJ: Modern Online Judge"
         },
         "model": "sites.site",
         "pk": 1
+    },
+    {
+        "fields": {
+            "problem": 1,
+            "zipfile": "aplusb/aplusb.zip"
+        },
+        "model": "judge.problemdata",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "problem": 2,
+            "zipfile": "aminusb/aminusb.zip"
+        },
+        "model": "judge.problemdata",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "problem": 3,
+            "zipfile": "amultiplyb/amulb.zip"
+        },
+        "model": "judge.problemdata",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "problem": 4,
+            "zipfile": "adivb/adivb.zip"
+        },
+        "model": "judge.problemdata",
+        "pk": 4
     }
 ]

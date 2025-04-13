@@ -38,6 +38,10 @@ from judge.utils.problems import contest_attempted_ids, contest_completed_ids, h
 from judge.utils.strings import safe_float_or_none, safe_int_or_none
 from judge.utils.tickets import own_ticket_filter
 from judge.utils.views import QueryStringSortMixin, SingleObjectFormView, TitleMixin, add_file_response, generic_message
+from django.db.models import Q
+
+
+
 
 recjk = re.compile(r'[\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303A\u303B\u3400-\u4DB5'
                    r'\u4E00-\u9FC3\uF900-\uFA2D\uFA30-\uFA6A\uFA70-\uFAD9\U00020000-\U0002A6D6\U0002F800-\U0002FA1D]')
@@ -439,6 +443,7 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
         return queryset.search(query, queryset.BOOLEAN).extra(order_by=['-relevance'])
 
     def get_normal_queryset(self):
+        queryset = Problem.objects.filter(is_public=True)
         filter = Q(is_public=True)
         if not self.request.user.has_perm('see_organization_problem'):
             org_filter = Q(is_organization_private=False)
@@ -479,6 +484,10 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
             queryset = queryset.filter(points__gte=self.point_start)
         if self.point_end is not None:
             queryset = queryset.filter(points__lte=self.point_end)
+        if 'difficulty' in self.request.GET:
+            difficulty = self.request.GET.get('difficulty')
+            if difficulty:
+                queryset = queryset.filter(difficulty=difficulty)
         return queryset.distinct()
 
     def get_queryset(self):

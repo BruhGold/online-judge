@@ -18,6 +18,8 @@ from judge.utils.raw_sql import join_sql_subquery, use_straight_join
 from judge.views.submission import group_test_cases
 
 
+
+
 class BaseSimpleFilter:
     def __init__(self, lookup):
         self.lookup = lookup
@@ -397,6 +399,7 @@ class APIProblemList(APIListView):
     model = Problem
     basic_filters = (
         ('partial', 'partial'),
+        ('difficulty', 'difficulty'),
     )
     list_filters = (
         ('code', 'code'),
@@ -422,6 +425,9 @@ class APIProblemList(APIListView):
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
+        if 'difficulty' in self.request.GET:
+            difficulty = self.request.GET.get('difficulty')
+            queryset = queryset.filter(difficulty=difficulty)
         if settings.ENABLE_FTS and 'search' in self.request.GET:
             query = ' '.join(self.request.GET.getlist('search')).strip()
             if query:
@@ -436,6 +442,7 @@ class APIProblemList(APIListView):
             'group': problem.group.full_name,
             'points': problem.points,
             'partial': problem.partial,
+            'difficulty': problem.difficulty,
             'is_organization_private': problem.is_organization_private,
             'is_public': problem.is_public,
         }
