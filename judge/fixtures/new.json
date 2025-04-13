@@ -1,0 +1,45 @@
+[
+    {
+        "fields": {
+            "date_joined": "2017-12-02T09:15:00.000Z",
+            "email": "",
+            "first_name": "Basic",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2017-12-02T09:20:00.000Z",
+            "last_name": "User2",
+            "password": "pbkdf2_sha256$600000$SaltierSALT$KNI4n6blztY5Jz9LaXEzPTAqtt6hK/RRQ1hC9kYDgvg=",
+            "user_permissions": [],
+            "username": "basicuser2"
+        },
+        "model": "auth.user",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "about": "I am a basic user.",
+            "ace_theme": "github",
+            "current_contest": null,
+            "display_rank": "user",
+            "ip": "10.0.2.3",
+            "language": 1,
+            "last_access": "2017-12-02T09:10:00.000Z",
+            "math_engine": "auto",
+            "mute": false,
+            "organizations": [
+                1
+            ],
+            "performance_points": 0.0,
+            "points": 0.0,
+            "problem_count": 0,
+            "rating": null,
+            "timezone": "America/Toronto",
+            "user": 2,
+            "user_script": ""
+        },
+        "model": "judge.profile",
+        "pk": 2
+    }
+]
