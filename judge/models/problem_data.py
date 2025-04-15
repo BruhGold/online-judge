@@ -52,11 +52,18 @@ class ProblemData(models.Model):
     def __init__(self, *args, **kwargs):
         super(ProblemData, self).__init__(*args, **kwargs)
         self.__original_zipfile = self.zipfile
+        self.__original_generator = self.generator
 
     def save(self, *args, **kwargs):
-        if self.zipfile != self.__original_zipfile:
+        super(ProblemData, self).save(*args, **kwargs)
+
+        if self.zipfile and self.__original_zipfile and self.zipfile != self.__original_zipfile:
             self.__original_zipfile.delete(save=False)
-        return super(ProblemData, self).save(*args, **kwargs)
+
+        if self.generator and self.__original_generator and self.generator != self.__original_generator:
+            self.__original_generator.delete(save=False)
+
+        return 
 
     def has_yml(self):
         return problem_data_storage.exists('%s/init.yml' % self.problem.code)

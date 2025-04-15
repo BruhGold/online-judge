@@ -8,7 +8,6 @@ from judge.models.problem import Problem
 from judge.models.problem_data import ProblemData, ProblemTestCase
 from ..permissions.problem import CanEditProblem
 from ..serializers.problem_data import ProblemFullDataSerializer
-from judge.utils.problem_data import ProblemDataCompiler, ProblemDataError
 from judge.views.problem_data import ProblemManagerMixin
 
 class APIProblemDataView(APIView, ProblemManagerMixin):
@@ -45,6 +44,8 @@ class APIProblemDataView(APIView, ProblemManagerMixin):
                 'output_file': request.data.get(f'{prefix}.output_file'),
                 'type': request.data.get(f'{prefix}.type'),
                 'order': request.data.get(f'{prefix}.order') or i + 1,
+                'points': request.data.get(f'{prefix}.points'),
+                'is_pretest': request.data.get(f'{prefix}.is_pretest'),
             })
             i += 1
 
@@ -59,40 +60,15 @@ class APIProblemDataView(APIView, ProblemManagerMixin):
                 'unicode': request.data.get('problem_data.unicode'),
                 'nobigmath': request.data.get('problem_data.nobigmath'),
                 'checker_args': request.data.get('problem_data.checker_args'),
+                'available_in_out': {}
             },
             'test_cases': test_cases
         }
 
-        serializer = ProblemFullDataSerializer(data=data)
+        serializer = ProblemFullDataSerializer(problem,data=data)
         if serializer.is_valid():
-            # Save ProblemData
-            problem_data_data = serializer.validated_data['problem_data']
-            problem_data, _ = ProblemData.objects.get_or_create(problem=problem)
-            for attr, value in problem_data_data.items():
-                setattr(problem_data, attr, value)
-            problem_data.save()
-
-            # Save TestCases
-            ProblemTestCase.objects.filter(dataset_id=problem.id).delete()
-            for case_data in serializer.validated_data['test_cases']:
-                ProblemTestCase.objects.create(dataset_id=problem.id, **case_data)
-
-            # Run compiler
-            valid_files = []
-            if problem_data.zipfile:
-                try:
-                    valid_files = ZipFile(problem_data.zipfile).namelist()
-                except BadZipfile:
-                    return Response({"detail": "Invalid zip file."}, status=status.HTTP_400_BAD_REQUEST)
-
-            ProblemDataCompiler.generate(
-                problem,
-                problem_data,
-                problem.cases.order_by('order'),
-                valid_files
-            )
-
-            return Response({'detail': 'Problem data saved successfully'})
+            response = serializer.save()
+            return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     put = post
