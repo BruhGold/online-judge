@@ -16,7 +16,7 @@
         color: #5c5954;
 
         a {
-            color: #FFF;
+            color: #273e74;
         }
     }
 
@@ -84,44 +84,40 @@ nav {
         margin: 0 0 0 -5px;
         padding: 0 0 0 1%;
         display: block;
+        background-color: white;
 
         li {
             display: inline-block;
-            color: #FFF;
+            color: #273e74;
             text-transform: uppercase;
             position: relative;
+            font-weight: bold;
 
             &.home-nav-element a {
                 padding: 0;
                 height: 44px;
-
-                &:hover {
-                    border-bottom: none;
-                    padding-top: 0;
-                    padding-bottom: 0;
-                }
             }
 
             a, button {
                 display: inline-block;
                 text-decoration: none;
                 vertical-align: middle;
-                color: #FFF;
+                color: #273e74;
                 padding: 13px 7px;
                 height: 18px;
 
-                &:link {
+                /*&:link {
                     color: #FFF;
-                }
+                }*/
 
                 &:hover {
-                    color: #FFF;
+                    text-decoration: underline;
                     background: rgba(255, 255, 255, 0.25);
                     margin: 0;
                 }
 
                 &.active {
-                    color: #FFF;
+                    color: #1a2d58;
                     background: $highlight_blue;
                 }
 
@@ -136,7 +132,7 @@ nav {
                 left: 5px;
                 display: none;
                 color: #fff;
-                background: #3b3b3b;
+                background: #ffffff;
                 margin: 0 !important;
                 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 
@@ -191,7 +187,7 @@ nav {
         display: inline-block;
         height: 32px;
         margin-right: 1px;
-        border-right: 3px solid rgba(255, 255, 255, 0.15);
+        border-right: 3px solid rgba(0, 0, 0, 0.201);
     }
 }
 
