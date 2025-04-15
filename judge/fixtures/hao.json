@@ -1,0 +1,482 @@
+[
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0001",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "Alice and Bob have scheduled a meeting inside of the Cathedral of Learning. Unfortunately, they didn't decide what floor to meet on!\n\nThe Cathedral of Learning has ~N~ floors. Alice will start on floor ~a~  and Bob will start on floor ~b~. The two will then employ opposing strategies to try and find the other: Every minute Alice and Bob will each explore the floor they are on, and will find each other if they are on the same floor. At the end of the minute Alice will take an elevator one floor up, and simultaneously Bob will take an elevator one floor down. They will repeat this process until either they meet up or one of the two can no longer continue the process (i.e. Alice finishes exploring floor ~N~ or Bob finishes exploring floor 1) in which case they will leave the building and agree to meet up at a later time.\n\nGiven ~N~, ~a~ and ~b~ determine if Alice and Bob will successfully meet up within the Cathedral of Learning.\n\n##Constraints\n\n~1 \\le N \\le 10^{12}~\n \n~1 \\le a,b \\le N~\n## Input Specification\n\nThe first line contains the integer ~N~\n\nThe second line contains the integer ~a~\n\nThe third line contains the integer ~b~\n.\n\n## Output Specification\n\nOn a single line output the string YES or the string NO - corresponding to whether Alice and Bob will meet in the given scenario.\n\n## Sample Input 1\n\n   5\n   4\n   3\n\n## Sample Output 1\n\nNO\n\n## Sample Input 2\n\n   10\n   4\n   4\n\n## Sample Output 2\n\nYES",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "The Cathedral of Learning",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 1
+    	},
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0002",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "You have been tasked by your city council with creating a soccer court in your local park. You go over to the park to investigate.\nThe park consists of a rectangle-shaped region consisting of a N x M grid of grass squares. Each square has a grass speed of sij representing how fast the ball will roll through that cell.\nA valid court consists of an axis-aligned subrectangle of the park with integer height and even width. This court will be split into equally-sized halves by a vertical line to create an offensive zone and a defensive zone for each team. To allow for construction of spectator seating, the court cannot be rotated and the midline must be vertical. The court must also satisfy one additional constraint - to ensure each team has an equal offensive advantage, the sum of the grass speeds in each of the two halves must be the same.\nOf course there may be more than one possible valid court within the park. To maximize player capacity, you will choose a court with maximum area.\nGiven this information, calculate the size of the court that you will pick out. If there is no valid court, output instead.\n\n##Constraints\n\n1 ≤ N ≤ 800\n\n1 ≤ M ≤ 400\n\n1 < sij≤ 10^9\n\n##Input Specification\n\nThe first line contains two integers N and M: the height and width of the park respectively.\n\nThe next N lines contain M integers each, representing the grass speed sij.\n\n##Output Specification\n\nOutput a single integer - the maximum possible area of a valid court.\n\nIf no valid court exists, output 0.\n\n##Sample Input 1\n\n4 6\n\n1 2 3 4 5 6\n\n2 3 4 5 6 7\n\n9 9 7 5 1 1 \n\n8 8 7 7 6 6\n\n##Sample Output 1\n\n18\n\n##Sample Input 2\n\n7 5\n\n10 10 10 10 10\n\n10 10 10 10 10\n\n10 10 10 10 10\n\n10 10 11 10 10\n\n10 10 10 10 10\n\n10 10 10 10 10 \n\n10 10 10 10 10\n\n##Sample Output 2\n\n14",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "Square Sum",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 2
+    	},
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0003",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "You have been tasked by your city council with creating a soccer court in your local park. You go over to the park to investigate.\nThe park consists of a rectangle-shaped region consisting of a N x M grid of grass squares. Each square has a grass speed of sij representing how fast the ball will roll through that cell.\nA valid court consists of an axis-aligned subrectangle of the park with integer height and even width. This court will be split into equally-sized halves by a vertical line to create an offensive zone and a defensive zone for each team. To allow for construction of spectator seating, the court cannot be rotated and the midline must be vertical. The court must also satisfy one additional constraint - to ensure each team has an equal offensive advantage, the sum of the grass speeds in each of the two halves must be the same.\nOf course there may be more than one possible valid court within the park. To maximize player capacity, you will choose a court with maximum area.\nGiven this information, calculate the size of the court that you will pick out. If there is no valid court, output instead.\n\n##Constraints\n\n1 ≤ N ≤ 800\n\n1 ≤ M ≤ 400\n\n1 < sij≤ 10^9\n\n##Input Specification\n\nThe first line contains two integers N and M: the height and width of the park respectively.\n\nThe next N lines contain M integers each, representing the grass speed sij.\n\n##Output Specification\n\nOutput a single integer - the maximum possible area of a valid court.\n\nIf no valid court exists, output 0.\n\n##Sample Input 1\n\n4 6\n\n1 2 3 4 5 6\n\n2 3 4 5 6 7\n\n9 9 7 5 1 1 \n\n8 8 7 7 6 6\n\n##Sample Output 1\n\n18\n\n##Sample Input 2\n\n7 5\n\n10 10 10 10 10\n\n10 10 10 10 10\n\n10 10 10 10 10\n\n10 10 11 10 10\n\n10 10 10 10 10\n\n10 10 10 10 10 \n\n10 10 10 10 10\n\n##Sample Output 2\n\n14",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "Soccer Court",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 3
+    	},
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0004",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "After reading an article on the Longest Increasing Subsequence problem, your friend Lucas is interested in other problems involving increasing subsequences.\nRecently, he has started asking you about increasing subsequences with large 'gaps'. Given a sequence a1, a2...an, an increasing subsequence with non-negative gap G is a sequence of indices 1 ≤ i1 < i2 < ... < in such that for all 1 <j<k we have that aijai, G.\nNote that Lucas does not need the sequence to be strictly increasing. Specifically, he is fine if G = 0 and a1 = ai;\nIn particular, given a sequence of N integers ai he wants you to find the largest (non-negative) integer G such that there exists an increasing subsequence of a with gap G. As this is too easy if you can choose small subsequences, he wants the subsequence to have length at least K.\nUnfortunately, when he wrote down his sequence ai some of the numbers got corrupted and were changed to -1. He now wants you to find the largest non-negative value G such that you can find a sequence bi that matches ai in all uncorrupted locations and has an increasing subsequence with gap G. Lucas wants you to consider bi that contain negative (and zero) integers, even though he is sure that his original uncorrupted a contained only positive integers.\nIf no valid G exist, instead output -1 and if the set of valid G is unbounded, output (Infinity).\n##Constraints\n2<K≤ N ≤2 × 10^5\nai= -1 or 1 ≤ai ≤ 10^9\n##Subtask 1 [20%]\nK = N\n##Subtask 2 [30%]\nN≤ 2000\n##Subtask 3 [50%]\nNo additional constraints.\n##Input Specification\nThe first line contains two integers: N and K.\nThe second line contains n integers: ai for 1 ≤ i ≤ n.\n##Output Specification\nOutput the maximum possible subsequence gap, or -1 if no such subsequence exists.\nIf the maximum possible gap is unbounded, output Infinity.\n##Sample Input 1\n10 10\n4 -1 -1 23 -1 54 -1 -1 63 -1\n##Sample Output 1\n3\n##Sample Input 2\n10 5\n4 -1 74 23 643 54 33 5 63 -1\n##Sample Output 2\n35",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "Increasing Sequence With Gap",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 4
+    	},
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0005",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "In the small country of Bytelandia there are N cities. In between certain pairs of cities there exist bidirectional roads.\nThe King of Bytelandia is looking to enforce tariffs on these roads. For each road, he wants to assign one of the two noble houses to collect taxes on trade passing through that road. However, the King also has a secret secondary goal: to prevent either of the noble houses from staging a rebellion.\nIf a noble house starts a rebellion, it will succeed if and only if the house can supply weapons to all cities within Bytelandia using at most K weapon factories.\nTo achieve this, the house must select up to K cities as weapon factories, and every city must be reachable from at least one factory via roads assigned to that house. If a house tries to transport weapons on a road controlled by the other house, their rebellion will be detected.\nThe King has come to you to find a road assignment such that no noble house will be able to form a successful rebellion.\n##Constraints\n2 ≤ N ≤ 3000\nFor all i, j, aj,i=0, aij = aji\n1≤K≤2\n##Subtask 1 [10%]\nK = 1\n##Subtask 2 [30%]\nK = 2\nN≤ 60\n##Subtask 3 [40%]\nK = 2\nN≤ 500\n##Subtask 4 [20%]\nK = 2\n##Input specification\nThe first line will contain two space seperated integers: N and K.\nThe next N lines will each contain a binary string of N digits a\nThese represent the adjacency matrix of the kingdom, with aij = 1 if cities i and j are directly connected by a road.\n##Output specification\nIf no valid assignment exists, output the string IMPOSSIBLE\nOtherwise output the string POSSIBLE, following by N strings of N digits bij satisfying 0 ≤ bij ≤ 2.\nbij = 0 denotes that there is no road between i and j (i.e. exactly when aj= 0).\nbij = 1 denotes that noble house 1 controls the road between i and j.\nbij= 2 denotes that noble house 2 controls the road between i and j.\nYou must satisfy bij = bj, i for all i, j.\nIf multiple valid assignments exist, any will be accepted.\n##Sample Input 1\n31\n011\n101\n110\n##Sample Output 1\nIMPOSSIBLE\n##Sample Input 2\n62\n010001\n101000\n010100\n001010\n000101 \n100010\n##Sample Output 2\nPOSSIBLE\n010002\n102000\n020100\n001020\n000201\n200010",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "Get It Twisted, They Will Divide Us",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 5
+    	},	
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0006",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "In gym class, you are playing football on an N by M grid. Everyone in the class is put into one of two teams, A and B. Team A is trying to score towards the right (towards column M), while Team B is trying to score to the left (towards column 1).\nYou know the positions of all the players on the field, but not who has the ball.\nThe person with the ball will always try to score a field goal. It will be blocked if there is a member of the opposite team within K units directly in front of them (assume all the players are facing the direction they are scoring).\nYou want to consider every possible scenario. Hence, for each player, assuming they have the ball, will they score or will they be blocked?\n##Constraints\n1≤ N x M≤ 10\n1≤ K≤ M\n##Subtask 1 [25%]\n1≤ N x M≤ 10\n##Subtask 2 [75%]\nNo additional constraints.\n##Input Specification\nThe first line of input contains three integers N, M, and K, representing the dimensions of the grid, and the distance required to block a field goal.\nThe next N lines of input each contain M characters. If the c-th character on the r-th row is an A or B, there is a player on that team at that position. Otherwise, the character will be a, which indicates an empty position.\n##Output Specification\nOutput an N by M grid where each position is represented by a indicating an empty position, a Y meaning the player would score their field goal, or an N meaning the player would be blocked.\n##Sample Input\n252\nA.B.A\n.BB..\n##Sample Output\nN.N.Y\n.YY..",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "Kicking",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 6
+    	},
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0007",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "Mr. Purple has a class of M students, who are numbered from 1 to M, and he is preparing a test with N questions for them. The questions on the test are in non-decreasing order of points, and all carry a specific weight in points, where the i-th question is worth A, points.\nKnown for his leniency during tests, Mr. Purple often does not watch the students, allowing them to sneakily google the answers on their phones. Unfortunately (for the students), he has a scheme in place to prevent cheating. For the i-th question, Mr. Purple estimates that B; students will correctly answer it. If more students solve a question than expected, Mr. Purple will believe the students have been cheating and will be forced to investigate.\nThankfully, after some clever social engineering from one of the brightest students (you), all the weights of the questions and Mr. Purple's estimations have been uncovered. Now, the night before the test, the class has agreed their strategy will be the following: Going through the test in order, for the i-th question, the B; students with the lowest score so far will put down the correct answer, while the others put down incorrect answers. If there are ties, the students numbered with smaller student numbers take priority. Your goal is to determine what the scores of each of the students will be on the test.\n## Constraints\n2 < N, M≤ 10^6\n1 ≤ A; < 10^9\nA1 A2 ... AN\n1 ≤ B; ≤ M\n##Subtask 1 [20%]\nA1 = 1\n##Subtask 2 [80%]\nNo additional constraints.\n##Input Specification\nThe first line of input contains two integers N, M, the number of questions and the number of students respectively.\nThe second line of input contains N integers A1, A2,..., AN, the number of points the i-th question is worth.\nThe third line of input contains N integers B1, B2...,BN, the number of students that are expected to solve the i-th question.\n##Output Specification\nOutput M integers, where the i-th integer is the final score of student i.\nIt is possible for these values to exceed the limits of a 32-bit integer. It is advised to use 64-bit integers instead, meaning that Java users should use (long), and C++ users should use long long).\n##Sample Input 1\n3 2\n1 2 3\n1 2 2\n##Sample Output 1\n6 5\n##Explanation for Sample 1\nInitially, the scores are [0, 0].\nThe first problem will be solved by only student #1. Hence, the scores will become [1,0].\nBoth the second and third problem will be solved by both students. Thus, the final scores will be [6,5].\n##Sample Input 2\n5 6\n1 2 2 7 8\n3 1 4 1 5\n##Sample Output 2\n11 11 8 10 10 10",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "Cheating",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 7
+    	},
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0008",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "As the new school year begins, the school is hosting a grand 'Rock, Paper, Scissors' tournament to welcome everyone back. N students will participate in the tournament, where N is a power of 2. Each student has a unique skill level from 1 to N, and when two students are matched against each other, the student with the higher skill level always wins. The students have been put into a specific order that was previously chosen by the organizers. The computer managing the tournament stores the details of the students in an array A1, A2, A3, ..., AN, where A, is the skill of the i-th student. The computer will match the students as follows:\n• The 1st student is matched against the 2nd student, the 3rd student is matched against the 4th student, the 5th student is matched against the 6th student, the 7th student is matched against the 8th student, and so on. The loser of each of the matches are then eliminated, whereas the winners progress to the next round.\n• The winner of the match between the 1st and 2nd student is matched against the winner of the match between the 3rd and 4th student, the winner of the match between the 5th and 6th student is matched against the winner of the match between the 7th and 8th student, and so on. Again, the losers are eliminated, and the winners progress to the next round.\n• This continues until there is one student remaining: the winner of the tournament.\nIn other words, the tournament is held in a single-elimination format.\nLet the underwhelmingness of a match be defined as the square of the difference between the skills of the students in a match. Let inserting an element in an array B at a index i mean placing at the i-th position in B, and shifting all subsequent elements one position to the right.\nAfter a brief power outage, the memory of the computer has become corrupted, and a random student has been deleted from A! To recover the original array A, the missing student must be reinserted into the array. For every i between 1 and N, determine the sum of the underwhelmingness of all matches played if the missing student was inserted at position i.\n## Constraints\n4 ≤ N ≤ 2^18\n1 < A; ≤ N\nN is a power of 2.\nNo two elements in A are equal.\n## Input Specification\nThe first line of input contains one integer N, the number of students participating in the tournament.\nThe second line of input contains N - 1 integers, the array A after a random student has been removed.\n##Output Specification\nOn one line, for every i between 1 and N, print the sum of the underwhelmingness of all matches played if the missing student was inserted at position i.\n##Sample Input\n4\n2 4 3\n##Sample Output\n6 6 9 9",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "Tournament",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 8
+    	},
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0009",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "There are N candidates who applied for a prestigious scholarship program. Each candidate is evaluated based on K different factors. The rating of the i-th candidate on the j-th factor is r1, where higher values indicate better performance.\nThe administration of the program has a secret importance ordering of the factors, which is a permutation of the numbers from 1 to K. For example, if the importance ordering is (3, 1, 2, 4), it means that the third factor is the most important, followed by the first factor, then the second factor, and finally the fourth factor.\nThe importance ordering determines how the candidates are ranked. The candidates are first compared based on the most important factor, and ties are broken by the second most important factor, then the third most important, and so on. If candidates have identical ratings for all K factors, the ties will be broken arbitrarily; those candidates can appear in any order. The administration has released the final ranking of the candidates, but not the importance ordering.\nGiven the ratings of all N candidates on the K factors and the final ranking, A, can you find the secret importance ordering? If multiple possible orderings produce the same ranking, output the lexicographically minimal one. If no such ordering exists, output -1.\n## Constraints\n1 ≤ N ≤ 10^5\n1 < K < 3 x 10^5\n1 < N x K < 3 x 10^6\n1 ≤ A_i ≤ N\nA_i ≠ A_j (i ≠ j)\n1 ≤ r_ij ≤ N\n##Subtask 1 [30%]\n1 < K < 30\n##Subtask 2 [70%]\nNo additional constraints.\n##Input Specification\nThe first line of input contains two integers N, K, the number of candidates and the number of factors, respectively.\nThe second line of input contains N integers, the array A. The i-th integer is the index of the candidate who ranked i-th.\nThe next N lines each contain K integers, representing the ratings of the candidates. The i-th line contains the ratings of the i-th candidate, r_1,1, r_1,2,...,r_1,k.\n##Output Specification\nIf a valid ordering of the factors exists, then output a single line containing K integers, representing the ordering of the factors. If there are multiple possible orderings that produce the same ranking, output the lexicographically minimal one. Otherwise, output -1.\n##Sample Input\n11 3\n11 4 6 1 3 10 5 7 8 2 9\n4 4 2\n2 1 2\n2 4 2\n3 4 4\n4 3 4\n1 4 4\n2 3 3\n4 1 4\n1 1 2\n1 4 1\n3 4 4\n##Sample Output\n2 3 1",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "Candidate",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 9
+    	},
+	{
+        "fields": {
+            "ac_rate": 0.0,
+            "allowed_languages": [
+                3,
+                4,
+                5,
+                6,
+                2,
+                7,
+                1,
+                8
+            ],
+            "authors": [
+                1
+            ],
+            "banned_users": [
+
+            ],
+            "code": "tc0010",
+            "curators": [
+
+            ],
+            "date": "2025-04-09T05:00:00Z",
+            "description": "Despite your best efforts, Mr. Purple has discovered that cheating has occurred in your class. There are N students, numbered from 1 to N, and each student has chosen someone to scapegoat - the i-th student will blame student A..\n\nThe principal, putting full faith in random sampling, plans to interview only the students numbered within some range [1, r], in increasing order of student number. To expedite the process, the principal will also set a threshold value k. The first student blamed at least k times will be expelled, concluding the investigation.\n\nYou want to anticipate various scenarios and determine the outcome for Q different sets of values for 1, r, and k. For each scenario, if a student would be expelled, output their number; otherwise, output (-1).\n\n## Constraints\n1 ≤ N, Q ≤ 5 ≤ 10^5\n\n1 < Ai ≤ N\n\n1 < l < r < N\n\n1≤ k ≤ N\n\n## Subtask 1 [25%]\n\n1 ≤ k ≤ 50\n\nSubtask 2 [75%]\n\nNo additional constraints.\n\nInput Specification\n\nThe first line of input contains two integers N and Q, the number of students and the number of scenarios respectively.\n\nThe second line of input contains N integers A1, A2,..., AN, the student that the i-th student blames.\n\nThe next Q lines each contain 3 integers 1, r, k, the starting number, the ending number, and the threshold value picked by the principal in this scenario.\n\n##Output Specification\n\nOutput Q lines. The i-th line should contain the answer to the i-th scenario: the number of the student who would be expelled, or -1 if no such student exists.\n\n##Sample Input\n\n10 6\n\n3 2 3 1 1 7 7 10 9 2\n\n1 7 1\n\n6 10 3\n\n4 6 1\n\n4 10 5\n\n3 10 1\n\n5 10 2\n\n##Sample Output\n\n3\n\n-1\n\n1\n\n-1\n\n3\n\n7",
+            "group": 1,
+            "is_manually_managed": false,
+            "is_public": true,
+            "license": null,
+            "memory_limit": 65536,
+            "name": "Candidate",
+            "og_image": "",
+            "partial": true,
+            "points": 10.0,
+            "short_circuit": false,
+            "summary": "",
+            "testers": [
+
+            ],
+            "time_limit": 2.0,
+            "types": [
+                1
+            ],
+            "user_count": 0
+        },
+        "model": "judge.problem",
+        "pk": 10
+    	}				
+]
