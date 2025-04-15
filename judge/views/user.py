@@ -6,6 +6,7 @@ import os
 import requests
 from datetime import datetime
 from operator import attrgetter, itemgetter
+from collections import defaultdict
 
 from django.conf import settings
 from django.contrib.auth import logout as auth_logout
@@ -47,6 +48,8 @@ from judge.utils.subscription import Subscription
 from judge.utils.unicode import utf8text
 from judge.utils.views import DiggPaginatorMixin, QueryStringSortMixin, TitleMixin, add_file_response, generic_message
 from .contests import ContestRanking
+from judge.models.problem import Problem
+
 
 __all__ = ['UserPage', 'UserAboutPage', 'UserProblemsPage', 'UserDownloadData', 'UserPrepareData',
            'users', 'edit_profile']
@@ -107,48 +110,34 @@ class UserPage(TitleMixin, UserMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(UserPage, self).get_context_data(**kwargs)
 
-        # Fetch all submissions data from the Submissions API
-        submissions_api_url = 'http://192.168.64.14:8000/api/v2/submissions'
-        response = requests.get(submissions_api_url)
+        context['hide_solved'] = int(self.hide_solved)
+        context['authored'] = self.object.authored_problems.filter(is_public=True, is_organization_private=False) \
+                                  .select_related('group').order_by('code')
+        rating = self.object.ratings.order_by('-contest__end_time')[:1]
+        context['rating'] = rating[0] if rating else None
 
-        if response.status_code == 200:
-            submissions_data = response.json()
+        context['rank'] = Profile.objects.filter(
+            is_unlisted=False, performance_points__gt=self.object.performance_points,
+        ).exclude(id=self.object.id).count() + 1
 
-            # Extract submission information
-            submissions = submissions_data.get('data', {}).get('objects', [])
-            
-            # Filter the submissions for the current user
-            user_submissions = [submission for submission in submissions if submission['user'] == self.object.username]
+        if rating:
+            context['rating_rank'] = Profile.objects.filter(
+                is_unlisted=False, rating__gt=self.object.rating,
+            ).count() + 1
 
-            # Calculate total submissions, successful submissions, and distinct problems attempted
-            total_submissions = len(user_submissions)
-            successful_submissions = sum(1 for submission in user_submissions if submission['result'] == 'AC')
+        context.update(self.object.ratings.aggregate(
+            min_rating=Min('rating'),
+            max_rating=Max('rating'),
+            contests=Count('contest')
+        ))
 
-            # Find distinct problems attempted (even failed submissions)
-            distinct_problems_attempted = len(set(submission['problem'] for submission in user_submissions))
-
-            # Calculate success rate and average attempts
-            success_rate = (successful_submissions / total_submissions) * 100 if total_submissions > 0 else 0
-            success_rate = round(success_rate, 2)
-            avg_attempts = total_submissions / distinct_problems_attempted if distinct_problems_attempted > 0 else 0
-
-            # Add the calculated values to the context
-            context['user_success_rate'] = success_rate
-            context['user_avg_attempts'] = avg_attempts
-        else:
-            context['user_success_rate'] = 0
-            context['user_avg_attempts'] = 0
-            print(f"Error fetching submissions data: {response.status_code}")
-
-        # Add other context as usual
-        context['rating'] = self.object.ratings.order_by('-contest__end_time')[:1] or None
         return context
-
-
 
     def get(self, request, *args, **kwargs):
         self.hide_solved = request.GET.get('hide_solved') == '1' if 'hide_solved' in request.GET else False
         return super(UserPage, self).get(request, *args, **kwargs)
+
+
 
 
 
@@ -186,8 +175,9 @@ class UserAboutPage(UserPage):
 
     def get_context_data(self, **kwargs):
         context = super(UserAboutPage, self).get_context_data(**kwargs)
-        ratings = context['ratings'] = self.object.ratings.order_by('-contest__end_time').select_related('contest') \
-            .defer('contest__description')
+
+        ratings = context['ratings'] = self.object.ratings.order_by('-contest__end_time') \
+            .select_related('contest').defer('contest__description')
 
         context['rating_data'] = mark_safe(json.dumps([{
             'label': rating.contest.name,
@@ -200,15 +190,16 @@ class UserAboutPage(UserPage):
             'height': '%.3fem' % rating_progress(rating.rating),
         } for rating in ratings]))
 
+        # Submission data for heatmap
         submissions = (
             self.object.submission_set
             .annotate(date_only=TruncDate('date'))
             .values('date_only').annotate(cnt=Count('id'))
         )
-
         context['submission_data'] = mark_safe(json.dumps({
             date_counts['date_only'].isoformat(): date_counts['cnt'] for date_counts in submissions
         }))
+
         context['submission_metadata'] = mark_safe(json.dumps({
             'min_year': (
                 self.object.submission_set
@@ -216,7 +207,44 @@ class UserAboutPage(UserPage):
                 .aggregate(min_year=Min('year_only'))['min_year']
             ),
         }))
+
+        # ➕ Calculate User Success Rate and Average Attempts
+        all_submissions = list(self.object.submission_set.values('problem', 'result'))
+
+        total_submissions = len(all_submissions)
+        successful_submissions = sum(1 for s in all_submissions if s['result'] == 'AC')
+
+        distinct_problems_attempted = len(set(s['problem'] for s in all_submissions))
+        success_rate = (successful_submissions / total_submissions) * 100 if total_submissions > 0 else 0
+        avg_attempts = total_submissions / distinct_problems_attempted if distinct_problems_attempted > 0 else 0
+
+        context['user_success_rate'] = round(success_rate, 2)
+        context['user_avg_attempts'] = round(avg_attempts, 2)
+
+        # ➕ User Performance By Problem Type Chart
+        type_stats = {}
+        for submission in all_submissions:
+            problem_id = submission['problem']
+            result = submission['result']
+            try:
+                problem = Problem.objects.get(pk=problem_id)
+                for t in problem.types.all():
+                    type_name = t.full_name
+                    if type_name not in type_stats:
+                        type_stats[type_name] = {'AC': 0, 'nonAC': 0}
+                    if result == 'AC':
+                        type_stats[type_name]['AC'] += 1
+                    else:
+                        type_stats[type_name]['nonAC'] += 1
+            except Problem.DoesNotExist:
+                continue  # Skip missing problems
+
+        context['type_performance_data'] = mark_safe(json.dumps(type_stats))
+
         return context
+
+
+
 
 
 class UserProblemsPage(UserPage):
