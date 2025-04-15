@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from judge.models.problem_data import ProblemData
+from judge.models.problem_data import ProblemData, ProblemTestCase
 import json
 
 class ProblemDataSerializer(serializers.ModelSerializer):
@@ -27,3 +27,12 @@ class ProblemDataSerializer(serializers.ModelSerializer):
             except json.JSONDecodeError:
                 raise serializers.ValidationError("Invalid JSON format in checker arguments.")
         return value
+
+class ProblemTestCaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProblemTestCase
+        fields = ['id', 'input_file', 'output_file', 'type', 'order']
+
+class ProblemFullDataSerializer(serializers.Serializer):
+    problem_data = ProblemDataSerializer()
+    test_cases = ProblemTestCaseSerializer(many=True)
