@@ -22,3 +22,48 @@ class ProblemSerializer(serializers.ModelSerializer):
         if not data.get('is_public', True) and not user.has_perm('judge.create_private_problem'):
             raise serializers.ValidationError("You don't have permission to create private problems.")
         return data
+
+    def validate_types(self, value):
+        if not value:
+            raise serializers.ValidationError("At least one 'type' must be selected.")
+        return value
+
+    def validate_group(self, value):
+        if value is None:
+            raise serializers.ValidationError("A 'group' must be selected.")
+        return value
+
+    def validate_description(self, value):
+        if not value:
+            raise serializers.ValidationError("Description cannot be empty.")
+        return value
+    
+    def validate_code(self, value):
+        if not value:
+            raise serializers.ValidationError("Code cannot be empty.")
+        return value
+
+    def validate_name(self,value):
+        if not value:
+            raise serializers.ValidationError("Name cannot be empty.")
+        return value
+
+    def validate_points(self,value):
+        if value is None:
+            raise serializers.ValidationError("Points cannot be empty.")
+        return value
+    
+    def validate_allowed_languages(self, value):
+        if not value:
+            raise serializers.ValidationError("At least one 'allowed_language' must be selected.")
+        return value
+
+    def validate_time_limit(self, value):
+        if value is None:
+            raise serializers.ValidationError("Time limit cannot be empty.")
+        return value
+
+    def validate_memory_limit(self, value):
+        if value is None:
+            raise serializers.ValidationError("Memory limit cannot be empty.")
+        return value
