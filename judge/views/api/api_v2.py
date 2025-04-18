@@ -8,6 +8,10 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.list import BaseListView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from django.contrib.auth import authenticate
 
 from judge.models import (
     Contest, ContestParticipation, ContestTag, Judge, Language, Organization, Problem, ProblemType, Profile, Rating,
@@ -16,8 +20,6 @@ from judge.models import (
 from judge.utils.infinite_paginator import InfinitePaginationMixin
 from judge.utils.raw_sql import join_sql_subquery, use_straight_join
 from judge.views.submission import group_test_cases
-
-
 
 
 class BaseSimpleFilter:
@@ -756,3 +758,15 @@ class APIJudgeList(APIListView):
             'load': judge.load,
             'languages': list(judge.runtimes.values_list('key', flat=True)),
         }
+
+
+class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            return Response({'message': 'Login successful', 'username': user.username})
+        return Response({'error': 'Invalid credentials'}, status=400)
