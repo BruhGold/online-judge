@@ -177,6 +177,7 @@ urlpatterns = [
              HttpResponsePermanentRedirect(reverse('all_user_submissions', args=[user]))),
 
         path('/', lambda _, user: HttpResponsePermanentRedirect(reverse('user_page', args=[user]))),
+        
     ])),
 
     path('comments/upvote/', comment.upvote_comment, name='comment_upvote'),
