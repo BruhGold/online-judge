@@ -16,7 +16,7 @@ from judge.models import (
 from judge.utils.infinite_paginator import InfinitePaginationMixin
 from judge.utils.raw_sql import join_sql_subquery, use_straight_join
 from judge.views.submission import group_test_cases
-
+from rest_framework.views import APIView
 
 
 
@@ -642,7 +642,7 @@ class APISubmissionList(APIListView):
         }
 
 
-class APISubmissionDetail(APILoginRequiredMixin, APIDetailView):
+class APISubmissionDetail(APIView, APILoginRequiredMixin, APIDetailView):
     model = Submission
     slug_field = 'id'
     slug_url_kwarg = 'submission'
