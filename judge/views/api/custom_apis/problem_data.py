@@ -49,6 +49,7 @@ class APIProblemDataView(APIView, ProblemManagerMixin):
 
         # Problem Data handling
         problem_data = {
+            'zipfile': zipfile,
             'generator': request.FILES.get('problem_data.generator'),
             'output_prefix': request.data.get('problem_data.output_prefix'),
             'output_limit': request.data.get('problem_data.output_limit'),
@@ -58,6 +59,8 @@ class APIProblemDataView(APIView, ProblemManagerMixin):
             'nobigmath': request.data.get('problem_data.nobigmath'),
             'checker_args': request.data.get('problem_data.checker_args')
         }
+
+
 
         # Test Case handling
         test_cases = []
