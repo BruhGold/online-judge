@@ -119,7 +119,7 @@ urlpatterns = [
         path('/test_data', ProblemDataView.as_view(), name='problem_data'),
         path('/test_data/init', problem_init_view, name='problem_data_init'),
         path('/test_data/diff', ProblemSubmissionDiff.as_view(), name='problem_submission_diff'),
-        path('/data/<path:path>', problem_data_file, name='problem_data_file'),
+        path('/data/<path:path>', problem_data_file.as_view(), name='problem_data_file'),
 
         path('/tickets', ticket.ProblemTicketListView.as_view(), name='problem_ticket_list'),
         path('/tickets/new', ticket.NewProblemTicketView.as_view(), name='new_problem_ticket'),
