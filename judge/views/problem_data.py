@@ -18,6 +18,9 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
 from judge.highlight_code import highlight_code
 from judge.models import Problem, ProblemData, ProblemTestCase, Submission, problem_data_storage
 from judge.utils.problem_data import ProblemDataCompiler
@@ -224,31 +227,32 @@ class ProblemDataView(TitleMixin, ProblemManagerMixin):
 
     put = post
 
+class problem_data_file(APIView):
+    permission_classes = [IsAuthenticated]
 
-@login_required
-def problem_data_file(request, problem, path):
-    object = get_object_or_404(Problem, code=problem)
-    if not object.is_editable_by(request.user):
-        raise Http404()
+    def get(self, request, problem, path):
+        object = get_object_or_404(Problem, code=problem)
+        if not object.is_editable_by(request.user):
+            raise Http404()
 
-    problem_dir = problem_data_storage.path(problem)
-    if os.path.commonpath((problem_data_storage.path(os.path.join(problem, path)), problem_dir)) != problem_dir:
-        raise Http404()
+        problem_dir = problem_data_storage.path(problem)
+        if os.path.commonpath((problem_data_storage.path(os.path.join(problem, path)), problem_dir)) != problem_dir:
+            raise Http404()
 
-    response = HttpResponse()
+        response = HttpResponse()
 
-    if hasattr(settings, 'DMOJ_PROBLEM_DATA_INTERNAL'):
-        url_path = '%s/%s/%s' % (settings.DMOJ_PROBLEM_DATA_INTERNAL, problem, path)
-    else:
-        url_path = None
+        if hasattr(settings, 'DMOJ_PROBLEM_DATA_INTERNAL'):
+            url_path = '%s/%s/%s' % (settings.DMOJ_PROBLEM_DATA_INTERNAL, problem, path)
+        else:
+            url_path = None
 
-    try:
-        add_file_response(request, response, url_path, os.path.join(problem, path), problem_data_storage)
-    except IOError:
-        raise Http404()
+        try:
+            add_file_response(request, response, url_path, os.path.join(problem, path), problem_data_storage)
+        except IOError:
+            raise Http404()
 
-    response['Content-Type'] = 'application/octet-stream'
-    return response
+        response['Content-Type'] = 'application/octet-stream'
+        return response
 
 
 @login_required
