@@ -81,26 +81,4 @@
     {% cache 3600 'organization_html' organization.id MATH_ENGINE %}
         {{ organization.about|markdown('organization-about', MATH_ENGINE)|reference|str|safe }}
     {% endcache %}
-
-    {% if classes %}
-        <hr>
-        <table class="table striped class-list">
-            <thead><tr><th>{{ _('Class') }}</th><th></th></tr></thead>
-            <tbody>
-                {% for class in classes %}
-                    <tr>
-                        <td>
-                            <a href="{{ class.get_absolute_url() }}">{{ class.name }}</a>
-                            <div class="class-description">{{ class.description }}</div>
-                        </td>
-                        <td>{% if class.joined %}
-                            {{ _('Joined') }}
-                        {% else -%}
-                            <a class="button" href="{{ class.get_join_url() }}">{{ _('Request to join') }}</a>
-                        {%- endif %}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
 {% endblock %}
