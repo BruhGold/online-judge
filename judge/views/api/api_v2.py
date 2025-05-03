@@ -34,6 +34,11 @@ class BaseSimpleFilter:
             return {self.lookup: None}
 
 
+class OrganizationSimpleFilter(BaseSimpleFilter):
+    def get_object(self, key):
+        return Organization.objects.get(slug=key)
+
+
 class ProfileSimpleFilter(BaseSimpleFilter):
     def get_object(self, key):
         return Profile.objects.get(user__username=key)
@@ -468,6 +473,7 @@ class APIProblemDetail(APIDetailView):
             'group': problem.group.full_name,
             'time_limit': problem.time_limit,
             'memory_limit': problem.memory_limit,
+            'description': problem.description,
             'language_resource_limits': [
                 {
                     'language': key,
