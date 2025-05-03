@@ -265,7 +265,7 @@ urlpatterns = [
         path('user/<str:user>', api.api_v2.APIUserDetail.as_view()),
         path('submissions', api.api_v2.APISubmissionList.as_view()),
         path('submission/<int:submission>', api.api_v2.APISubmissionDetail.as_view()),
-        path('organizations', api.api_v2.APIOrganizationList.as_view()),
+        path('organizations', api.custom_apis.APIOrganizationListView.as_view()),
         path('participations', api.api_v2.APIContestParticipationList.as_view()),
         path('languages', api.api_v2.APILanguageList.as_view()),
         path('judges', api.api_v2.APIJudgeList.as_view()),
