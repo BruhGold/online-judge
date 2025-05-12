@@ -348,13 +348,13 @@ block title_row %} {% set tab = 'about' %} {% include "user/user-tabs.html" %}
         {
           label: "Accepted (AC)",
           data: acData,
-          backgroundColor: "rgba(0, 200, 83, 0.8)", // green
+          backgroundColor: "rgba(0, 200, 83, 0.8)", // Green for AC
           borderWidth: 1,
         },
         {
           label: "Other (WA, TLE, etc.)",
           data: nonAcData,
-          backgroundColor: "rgba(244, 67, 54, 0.8)", // red
+          backgroundColor: "rgba(244, 67, 54, 0.8)", // Red for non-AC
           borderWidth: 1,
         },
       ],
@@ -364,7 +364,7 @@ block title_row %} {% set tab = 'about' %} {% include "user/user-tabs.html" %}
       responsive: true,
       plugins: {
         legend: {
-          labels: { color: "white" },
+          labels: { color: "black" }, // Legend text color for light mode
         },
         tooltip: {
           mode: "index",
@@ -376,19 +376,19 @@ block title_row %} {% set tab = 'about' %} {% include "user/user-tabs.html" %}
           stacked: true,
           beginAtZero: true,
           ticks: {
-            color: "white",
+            color: "black", // Tick color for light mode
             stepSize: 1, // only show whole numbers
             precision: 0, // no decimal places
           },
           grid: {
-            color: "rgba(255, 255, 255, 0.1)",
+            color: "rgba(0, 0, 0, 0.1)", // Light grid color
           },
         },
 
         y: {
           stacked: true,
-          ticks: { color: "white" },
-          grid: { color: "rgba(255, 255, 255, 0.1)" },
+          ticks: { color: "black" }, // Tick color for light mode
+          grid: { color: "rgba(0, 0, 0, 0.1)" }, // Light grid color
         },
       },
     },
