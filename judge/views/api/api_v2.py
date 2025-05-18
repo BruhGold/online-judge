@@ -16,7 +16,7 @@ from judge.models import (
 from judge.utils.infinite_paginator import InfinitePaginationMixin
 from judge.utils.raw_sql import join_sql_subquery, use_straight_join
 from judge.views.submission import group_test_cases
-
+from rest_framework.views import APIView
 
 
 
@@ -32,6 +32,11 @@ class BaseSimpleFilter:
             return {self.lookup: self.get_object(key)}
         except ObjectDoesNotExist:
             return {self.lookup: None}
+
+
+class OrganizationSimpleFilter(BaseSimpleFilter):
+    def get_object(self, key):
+        return Organization.objects.get(slug=key)
 
 
 class ProfileSimpleFilter(BaseSimpleFilter):
@@ -468,6 +473,7 @@ class APIProblemDetail(APIDetailView):
             'group': problem.group.full_name,
             'time_limit': problem.time_limit,
             'memory_limit': problem.memory_limit,
+            'description': problem.description,
             'language_resource_limits': [
                 {
                     'language': key,
@@ -642,7 +648,7 @@ class APISubmissionList(APIListView):
         }
 
 
-class APISubmissionDetail(APILoginRequiredMixin, APIDetailView):
+class APISubmissionDetail(APIView, APILoginRequiredMixin, APIDetailView):
     model = Submission
     slug_field = 'id'
     slug_url_kwarg = 'submission'

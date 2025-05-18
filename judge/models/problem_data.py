@@ -52,11 +52,18 @@ class ProblemData(models.Model):
     def __init__(self, *args, **kwargs):
         super(ProblemData, self).__init__(*args, **kwargs)
         self.__original_zipfile = self.zipfile
+        self.__original_generator = self.generator
 
     def save(self, *args, **kwargs):
-        if self.zipfile != self.__original_zipfile:
+        super(ProblemData, self).save(*args, **kwargs)
+
+        if self.zipfile and self.__original_zipfile and self.zipfile != self.__original_zipfile:
             self.__original_zipfile.delete(save=False)
-        return super(ProblemData, self).save(*args, **kwargs)
+
+        if self.generator and self.__original_generator and self.generator != self.__original_generator:
+            self.__original_generator.delete(save=False)
+
+        return 
 
     def has_yml(self):
         return problem_data_storage.exists('%s/init.yml' % self.problem.code)
@@ -88,7 +95,7 @@ class ProblemTestCase(models.Model):
     output_file = models.CharField(max_length=100, verbose_name=_('output file name'), blank=True)
     generator_args = models.TextField(verbose_name=_('generator arguments'), blank=True)
     points = models.IntegerField(verbose_name=_('point value'), blank=True, null=True)
-    is_pretest = models.BooleanField(verbose_name=_('case is pretest?'))
+    is_pretest = models.BooleanField(verbose_name=_('case is pretest?'), default=False)
     output_prefix = models.IntegerField(verbose_name=_('output prefix length'), blank=True, null=True)
     output_limit = models.IntegerField(verbose_name=_('output limit length'), blank=True, null=True)
     checker = models.CharField(max_length=10, verbose_name=_('checker'), choices=CHECKERS, blank=True)
