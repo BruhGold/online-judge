@@ -24,6 +24,13 @@ def add_file_response(request, response, url_path, file_path, file_object=None):
                 response.content = f.read()
 
 
+
+def about_page(request):
+    return render(request, 'about.html', {
+        'title': 'About Page',
+    })
+
+
 def paginate_query_context(request):
     query = request.GET.copy()
     query.setlist('page', [])
