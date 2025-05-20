@@ -87,7 +87,6 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
             'curators',
             'testers',
             'spectators',
-            'classes',
         )
 
         profile = self.request.profile
@@ -151,16 +150,16 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
         context['search_query'] = self.search_query
         context.update(self.get_sort_context())
         context.update(self.get_sort_paginate_context())
+        print(context)
         return context
 
 
 class PrivateContestError(Exception):
-    def __init__(self, name, is_private, is_organization_private, orgs, classes):
+    def __init__(self, name, is_private, is_organization_private, orgs):
         self.name = name
         self.is_private = is_private
         self.is_organization_private = is_organization_private
         self.orgs = orgs
-        self.classes = classes
 
 
 class ContestMixin(object):
@@ -240,7 +239,7 @@ class ContestMixin(object):
             contest.access_check(self.request.user)
         except Contest.PrivateContest:
             raise PrivateContestError(contest.name, contest.is_private, contest.is_organization_private,
-                                      contest.organizations.all(), contest.classes.all())
+                                      contest.organizations.all())
         except Contest.Inaccessible:
             raise Http404()
         else:

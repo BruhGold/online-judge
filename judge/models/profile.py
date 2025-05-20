@@ -28,7 +28,7 @@ from judge.models.runtime import Language
 from judge.ratings import rating_class
 from judge.utils.two_factor import webauthn_decode
 
-__all__ = ['Class', 'Organization', 'Profile', 'OrganizationRequest', 'WebAuthnCredential']
+__all__ = ['Organization', 'Profile', 'OrganizationRequest', 'WebAuthnCredential']
 
 
 class EncryptedNullCharField(EncryptedCharField):
@@ -59,12 +59,9 @@ class Organization(models.Model):
                                            blank=True,
                                            help_text=_('This image will replace the default site logo for users '
                                                        'viewing the organization.'))
-    class_required = models.BooleanField(verbose_name=_('class membership required'), default=False,
-                                         help_text=_('Whether members are compelled to select a class when joining.'))
 
     def clean(self):
-        if self.class_required and self.is_open:
-            raise ValidationError(_('Class membership cannot be enforced when organization has open enrollment.'))
+        pass
 
     def __contains__(self, item):
         if isinstance(item, int):
@@ -86,9 +83,6 @@ class Organization(models.Model):
     def can_review_all_requests(self, profile):
         return self.admins.filter(id=profile.id).exists()
 
-    def can_review_class_requests(self, profile):
-        return self.classes.filter(admins__id=profile.id).exists()
-
     class Meta:
         ordering = ['name']
         permissions = (
@@ -97,51 +91,6 @@ class Organization(models.Model):
         )
         verbose_name = _('organization')
         verbose_name_plural = _('organizations')
-
-
-class Class(models.Model):
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name=_('organization'),
-                                     help_text=_('The organization that this class belongs to.'),
-                                     related_name='classes', related_query_name='class')
-    name = models.CharField(max_length=128, verbose_name=_('class name'), unique=True)
-    slug = models.SlugField(max_length=128, verbose_name=_('class slug'), help_text=_('Class name shown in URLs.'))
-    description = models.TextField(verbose_name=_('class description'), blank=True)
-    is_active = models.BooleanField(verbose_name=_('is class active'), default=True)
-    access_code = models.CharField(max_length=7, verbose_name=_('access code'), null=True, blank=True,
-                                   help_text=_('Student access code.'))
-    admins = models.ManyToManyField('Profile', verbose_name=_('administrators'), related_name='class_admin_of',
-                                    help_text=_('Those who can approve membership to this class.'))
-    members = models.ManyToManyField('Profile', verbose_name=_('members'), blank=True,
-                                     related_name='classes', related_query_name='class')
-
-    @classmethod
-    def get_visible_classes(cls, user):
-        if not user.is_authenticated:
-            return cls.objects.none()
-
-        if user.has_perm('judge.edit_all_organization'):
-            return cls.objects.all()
-
-        return cls.objects.filter(contest__organizations__admins=user.profile) | cls.objects.filter(admins=user.profile)
-
-    def __str__(self):
-        return _('%(class)s in %(organization)s') % {'class': self.name, 'organization': self.organization.name}
-
-    def get_absolute_url(self):
-        return reverse('class_home', args=self._url_args)
-
-    def get_join_url(self):
-        return reverse('class_join', args=self._url_args)
-
-    @cached_property
-    def _url_args(self):
-        return self.organization.id, self.organization.slug, self.id, self.slug
-
-    class Meta:
-        ordering = ['organization', 'name']
-        verbose_name = _('class')
-        verbose_name_plural = _('classes')
-        constraints = [UniqueConstraint(fields=['name'], condition=Q(is_active=True), name='unique_active_name')]
 
 
 class Profile(models.Model):
@@ -373,14 +322,10 @@ class OrganizationRequest(models.Model):
         ('A', _('Approved')),
         ('R', _('Rejected')),
     ))
-    request_class = models.ForeignKey(Class, verbose_name=_('class'), on_delete=models.CASCADE, null=True, blank=True)
     reason = models.TextField(verbose_name=_('reason'))
 
     def clean(self):
-        if self.organization.class_required and self.request_class is None:
-            raise ValidationError('Organization requires a class to be specified')
-        if self.request_class and self.organization_id != self.request_class.organization_id:
-            raise ValidationError('Class must be part of the organization')
+        pass
 
     class Meta:
         verbose_name = _('organization join request')

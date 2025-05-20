@@ -34,11 +34,6 @@ class BaseSimpleFilter:
             return {self.lookup: None}
 
 
-class OrganizationSimpleFilter(BaseSimpleFilter):
-    def get_object(self, key):
-        return Organization.objects.get(slug=key)
-
-
 class ProfileSimpleFilter(BaseSimpleFilter):
     def get_object(self, key):
         return Profile.objects.get(user__username=key)
@@ -725,6 +720,40 @@ class APIOrganizationList(APIListView):
             'member_count': organization.member_count,
         }
 
+class APIOrganizationDetail(APIDetailView):
+    model = Organization
+    slug_field = 'id'
+    pk_url_kwarg = 'pk'
+
+    def get_queryset(self):
+        return Organization.objects.annotate(member_count=Count('member'))
+
+    def get_object(self, queryset=None):
+        organization = super().get_object(queryset)
+        admins = organization.admins.all()
+        return organization
+
+    def get_object_data(self, organization):
+        admins = organization.admins.all()
+        object_data = {
+            'id': organization.id,
+            'name': organization.name,
+            'slug': organization.slug,
+            'short_name': organization.short_name,
+            'is_open': organization.is_open,
+            'slots': organization.slots,
+            'member_count': organization.member_count,
+        }
+
+        if self.request.user.is_authenticated:
+            if self.request.user.profile in admins:
+                object_data.update({
+                    'members': list(organization.members.values('id', 'user__username')),
+                    'access_code': organization.access_code,
+                    'admins': list(admins.values('id', 'user__username')),
+                })
+
+        return object_data
 
 class APILanguageList(APIListView):
     model = Language

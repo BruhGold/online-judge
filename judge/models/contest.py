@@ -12,7 +12,7 @@ from moss import MOSS_LANG_C, MOSS_LANG_CC, MOSS_LANG_JAVA, MOSS_LANG_PYTHON
 
 from judge import contest_format
 from judge.models.problem import Problem
-from judge.models.profile import Class, Organization, Profile
+from judge.models.profile import Organization, Profile
 from judge.models.submission import Submission
 from judge.ratings import rate_contest
 
@@ -145,8 +145,6 @@ class Contest(models.Model):
     join_organizations = models.ManyToManyField(Organization, blank=True, verbose_name=_('join organizations'),
                                                 help_text=_('If non-empty, only these organizations may join '
                                                             'the contest.'), related_name='join_only_contests')
-    classes = models.ManyToManyField(Class, blank=True, verbose_name=_('classes'),
-                                     help_text=_('If organization private, only these classes may see the contest.'))
     og_image = models.CharField(verbose_name=_('OpenGraph image'), default='', max_length=150, blank=True)
     logo_override_image = models.CharField(verbose_name=_('logo override image'), default='', max_length=150,
                                            blank=True,
@@ -365,8 +363,7 @@ class Contest(models.Model):
         if self.view_contest_scoreboard.filter(id=user.profile.id).exists():
             return
 
-        in_org = (self.organizations.filter(id__in=user.profile.organizations.all()).exists() or
-                  self.classes.filter(id__in=user.profile.classes.all()).exists())
+        in_org = (self.organizations.filter(id__in=user.profile.organizations.all()).exists())
         in_users = self.private_contestants.filter(id=user.profile.id).exists()
 
         if not self.is_private and self.is_organization_private:
@@ -450,8 +447,7 @@ class Contest(models.Model):
 
         queryset = cls.objects.defer('description')
         if not (user.has_perm('judge.see_private_contest') or user.has_perm('judge.edit_all_contest')):
-            org_check = (Q(organizations__in=user.profile.organizations.all()) |
-                         Q(classes__in=user.profile.classes.all()))
+            org_check = (Q(organizations__in=user.profile.organizations.all()))
             q = Q(is_visible=True)
             q &= (
                 Q(view_contest_scoreboard=user.profile) |

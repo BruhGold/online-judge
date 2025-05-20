@@ -14,7 +14,7 @@ from django.utils.translation import gettext_lazy as _, ngettext
 from django.views.decorators.http import require_POST
 from reversion.admin import VersionAdmin
 
-from judge.models import Class, Contest, ContestProblem, ContestSubmission, Profile, Rating, Submission
+from judge.models import Contest, ContestProblem, ContestSubmission, Profile, Rating, Submission
 from judge.ratings import rate_contest
 from judge.utils.views import NoBatchDeleteMixin
 from judge.widgets import AdminAceWidget, AdminHeavySelect2MultipleWidget, AdminHeavySelect2Widget, \
@@ -102,7 +102,6 @@ class ContestForm(ModelForm):
             'spectators': AdminHeavySelect2MultipleWidget(data_view='profile_select2'),
             'private_contestants': AdminHeavySelect2MultipleWidget(data_view='profile_select2'),
             'organizations': AdminHeavySelect2MultipleWidget(data_view='organization_select2'),
-            'classes': AdminHeavySelect2MultipleWidget(data_view='class_select2'),
             'join_organizations': AdminHeavySelect2MultipleWidget(data_view='organization_select2'),
             'tags': AdminSelect2MultipleWidget,
             'banned_users': AdminHeavySelect2MultipleWidget(data_view='profile_select2'),
@@ -123,7 +122,7 @@ class ContestAdmin(NoBatchDeleteMixin, SortableAdminBase, VersionAdmin):
         (_('Details'), {'fields': ('description', 'og_image', 'logo_override_image', 'tags', 'summary')}),
         (_('Format'), {'fields': ('format_name', 'format_config', 'problem_label_script')}),
         (_('Rating'), {'fields': ('is_rated', 'rate_all', 'rating_floor', 'rating_ceiling', 'rate_exclude')}),
-        (_('Access'), {'fields': ('access_code', 'private_contestants', 'organizations', 'classes',
+        (_('Access'), {'fields': ('access_code', 'private_contestants', 'organizations',
                                   'join_organizations', 'view_contest_scoreboard', 'view_contest_submissions')}),
         (_('Justice'), {'fields': ('banned_users',)}),
     )
@@ -180,8 +179,8 @@ class ContestAdmin(NoBatchDeleteMixin, SortableAdminBase, VersionAdmin):
         if form.changed_data:
             if 'private_contestants' in form.changed_data:
                 obj.is_private = bool(form.cleaned_data['private_contestants'])
-            if 'organizations' in form.changed_data or 'classes' in form.changed_data:
-                obj.is_organization_private = bool(form.cleaned_data['organizations'] or form.cleaned_data['classes'])
+            if 'organizations' in form.changed_data:
+                obj.is_organization_private = bool(form.cleaned_data['organizations'])
             if 'join_organizations' in form.cleaned_data:
                 obj.limit_join_organizations = bool(form.cleaned_data['join_organizations'])
 
@@ -321,7 +320,6 @@ class ContestAdmin(NoBatchDeleteMixin, SortableAdminBase, VersionAdmin):
             Q(user__groups__permissions__codename__in=perms) |
             Q(user__user_permissions__codename__in=perms),
         ).distinct()
-        form.base_fields['classes'].queryset = Class.get_visible_classes(request.user)
         return form
 
 
