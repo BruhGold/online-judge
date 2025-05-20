@@ -22,7 +22,8 @@ from judge.views.select2 import AssigneeSelect2View , CommentSelect2View, Contes
     UserSearchSelect2View, UserSelect2View
 from judge.views.widgets import martor_image_uploader
 from martor.views import markdown_search_user
-from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
+from judge.views.api.custom_apis.token_obtain import TokenObtainPairView
 
 
 admin.autodiscover()
@@ -266,6 +267,7 @@ urlpatterns = [
         path('submissions', api.api_v2.APISubmissionList.as_view()),
         path('submission/<int:submission>', api.api_v2.APISubmissionDetail.as_view()),
         path('organizations', api.custom_apis.APIOrganizationListView.as_view()),
+        path('organization/<int:pk>', api.custom_apis.APIOrganizationDetailView.as_view()),
         path('participations', api.api_v2.APIContestParticipationList.as_view()),
         path('languages', api.api_v2.APILanguageList.as_view()),
         path('judges', api.api_v2.APIJudgeList.as_view()),

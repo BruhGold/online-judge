@@ -568,6 +568,7 @@ CACHES = {}
 
 # Authentication
 AUTHENTICATION_BACKENDS = (
+    'judge.social_auth.MoodleOAuth2',
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
     'judge.social_auth.GitHubSecureEmailOAuth2',
@@ -594,8 +595,11 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_GITHUB_SECURE_SCOPE = ['user:email']
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_MOODLE_SCOPE = ['user_info']
+
 SOCIAL_AUTH_SLUGIFY_USERNAMES = True
 SOCIAL_AUTH_SLUGIFY_FUNCTION = 'judge.social_auth.slugify_username'
+USER_FIELDS = ["username", "email", "password"]
 
 MOSS_API_KEY = None
 

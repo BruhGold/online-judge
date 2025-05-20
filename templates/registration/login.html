@@ -23,6 +23,10 @@
         .github-icon i {
             color: black;
         }
+
+        .moodle-icon i {
+            color:rgb(255, 132, 0);
+        }
     </style>
 {% endblock %}
 
@@ -55,7 +59,7 @@
         </form>
         <a href="{{ url('password_reset') }}">{{ _('Forgot your password?') }}</a>
 
-        {% if form.has_google_auth or form.has_facebook_auth or form.has_github_auth %}
+        {% if form.has_google_auth or form.has_facebook_auth or form.has_github_auth or form.has_moodle_auth %}
             <h4>{{ _('Or log in with...') }}</h4>
             <div>
                 {% if form.has_google_auth %}
@@ -71,6 +75,11 @@
                 {% if form.has_github_auth %}
                     <a href="{{ url('social:begin', "github-secure") }}?next={{ next }}" class="social github-icon">
                         <i class="fa fa-github-square"></i>
+                    </a>
+                {% endif %}
+                {% if form.has_moodle_auth %}
+                    <a href="{{ url('social:begin', "moodle") }}?next={{ next }}" class="social moodle-icon">
+                        <img class="fa fa-moodle-square" src="https://courses.ctda.hcmus.edu.vn/pluginfile.php/1/theme_academi/favicon/1730383208/FIT.png"></i>
                     </a>
                 {% endif %}
             </div>

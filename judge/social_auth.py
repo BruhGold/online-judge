@@ -1,16 +1,20 @@
 import logging
 import re
 from operator import itemgetter
-from urllib.parse import quote
+from urllib.parse import quote, urlencode, urlparse
 
+from django.shortcuts import redirect
 from django import forms
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from requests import HTTPError
+import requests
 from reversion import revisions
+from django.conf import settings
 from social_core.backends.github import GithubOAuth2
+from social_core.backends.oauth import BaseOAuth2
 from social_core.exceptions import InvalidEmail, SocialAuthBaseException
 from social_core.pipeline.partial import partial
 from social_django.middleware import SocialAuthExceptionMiddleware as OldSocialAuthExceptionMiddleware
@@ -42,6 +46,41 @@ class GitHubSecureEmailOAuth2(GithubOAuth2):
 
         return data
 
+class MoodleOAuth2(BaseOAuth2):
+    name = 'moodle'
+    AUTHORIZATION_URL = f"http://{settings.MOODLE_DOMAIN}/local/oauth/login.php"
+    ACCESS_TOKEN_URL = f'http://{settings.MOODLE_DOMAIN}/local/oauth/token.php'
+    ACCESS_TOKEN_METHOD = 'POST'
+    SCOPE_SEPARATOR = ' '
+    REDIRECT_STATE = False
+    RESPONSE_TYPE = 'code'
+    EXTRA_DATA = [
+        ('id', 'id'),
+        ('expires', 'expires'),
+        ('access_token', 'access_token'),
+        ('refresh_token', 'refresh_token'),
+    ]
+
+    def user_data(self, access_token, *args, **kwargs):
+        url = f"http://{settings.MOODLE_DOMAIN}/local/oauth/user_info.php?" + urlencode({
+            'access_token': access_token
+        })
+
+        try:
+            return self.get_json(url)
+        except (HTTPError, ValueError, TypeError):
+            return {}
+
+    def get_user_details(self, response):
+        return {
+            'username': response.get('username', ''),
+            'password': response.get('password', ''),
+            'email': response.get('email', ''),
+            'id': response.get('userid', None),
+            'first_name': response.get('firstname', ''),
+            'last_name': response.get('lastname', ''),
+        }
+
 
 def slugify_username(username, renotword=re.compile(r'[^\w]')):
     return renotword.sub('', username.replace('-', '_'))
@@ -55,6 +94,11 @@ def verify_email(backend, details, *args, **kwargs):
 class UsernameForm(forms.Form):
     username = forms.RegexField(regex=r'^\w+$', max_length=30, label='Username',
                                 error_messages={'invalid': 'A username must contain letters, numbers, or underscores.'})
+    password = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput,
+        min_length=6
+    )
 
     def clean_username(self):
         if User.objects.filter(username=self.cleaned_data['username']).exists():
@@ -69,13 +113,29 @@ def choose_username(backend, user, username=None, *args, **kwargs):
         if request.POST:
             form = UsernameForm(request.POST)
             if form.is_valid():
-                return {'username': form.cleaned_data['username']}
+                return {
+                    'username': form.cleaned_data['username'],
+                    'password': form.cleaned_data['password'],
+                }
         else:
             form = UsernameForm(initial={'username': username})
         return render(request, 'registration/username_select.html', {
             'title': 'Choose a username', 'form': form,
         })
 
+# We are not using this right now, might comeback to it later
+@partial
+def post_login_sync(backend, user, response, *args, **kwargs):
+    if backend.name == "moodle":
+        social = user.social_auth.get(provider='moodle')
+        access_token = social.response.get('access_token')
+        
+        if access_token:
+            requests.post(
+                f"http://{settings.MOODLE_DOMAIN}/api/sync",
+                headers={"Authorization": f"Bearer {access_token}"},
+                timeout=5
+            )
 
 @partial
 def make_profile(backend, user, response, is_new=False, *args, **kwargs):
