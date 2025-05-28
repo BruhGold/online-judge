@@ -15,6 +15,7 @@ class JudgeAppConfig(AppConfig):
         from . import signals, jinja2  # noqa: F401, imported for side effects
 
         from judge.models import Language, Profile
+        from judge.utils.mail import send_mail
         from django.contrib.auth.models import User
 
         try:

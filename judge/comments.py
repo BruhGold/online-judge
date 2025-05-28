@@ -15,11 +15,12 @@ from django.utils.translation import gettext as _
 from django.views.generic import View
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
+from django.contrib.auth.models import User
 from reversion import revisions
 from reversion.models import Revision, Version
 
 from judge.dblock import LockModel
-from judge.models import Comment, CommentLock
+from judge.models import Comment, CommentLock, BlogPost
 from judge.widgets import MartorWidget
 
 
@@ -92,7 +93,7 @@ class CommentedDetailView(TemplateResponseMixin, SingleObjectMixin, View):
             comment = form.save(commit=False)
             comment.author = request.profile
             comment.page = page
-            with LockModel(write=(Comment, Revision, Version), read=(ContentType,)), revisions.create_revision():
+            with LockModel(write=(Comment, Revision, Version), read=(ContentType,BlogPost,BlogPost.subscribers.through,User)), revisions.create_revision():
                 revisions.set_user(request.user)
                 revisions.set_comment(_('Posted comment'))
                 comment.save()

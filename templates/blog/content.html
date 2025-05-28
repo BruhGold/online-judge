@@ -2,6 +2,7 @@
 
 {% block js_media %}
     {% include "comments/media-js.html" %}
+    {% include "blog/subscribe-ajax.html" %}
 {% endblock %}
 
 {% block media %}
@@ -9,9 +10,13 @@
 {% endblock %}
 
 {% block header %}
-    {% if post.is_editable_by(request.user) %}
-        <div class="title-line-action">[<a href="{{ url('admin:judge_blogpost_change', post.id) }}">{{ _('Edit') }}</a>]
-        </div>
+    {% if request.user.is_authenticated %}
+        {% csrf_token %}
+        <button id="subscribe-btn" data-post-id="{{ post.id }}" 
+            class="{{ 'button-cancel' if is_subscribed else 'button' }}" 
+            style="float: right">
+            {{ 'Unsubscribe' if is_subscribed else 'Subscribe' }}
+        </button>
     {% endif %}
 {% endblock %}
 
@@ -28,6 +33,11 @@
                     posted on {{ time }}
                 {% endtrans %}
             </span>
+
+            {% if post.is_editable_by(request.user) %}
+                <div class="title-line-action">[<a href="{{ url('admin:judge_blogpost_change', post.id) }}">{{ _('Edit') }}</a>]
+                </div>
+            {% endif %}
         </div>
         <div class="body content-description">
             {% cache 86400 'post_content' post.id MATH_ENGINE %}

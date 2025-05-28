@@ -5,6 +5,10 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.generic import ListView
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
 
 from judge.comments import CommentedDetailView
 from judge.models import BlogPost, Comment, Contest, Language, Problem, ProblemClarification, Profile, Submission, \
@@ -14,7 +18,6 @@ from judge.utils.diggpaginator import DiggPaginator
 from judge.utils.opengraph import generate_opengraph
 from judge.utils.tickets import filter_visible_tickets
 from judge.utils.views import TitleMixin
-
 
 class PostList(ListView):
     model = BlogPost
@@ -109,7 +112,8 @@ class PostView(TitleMixin, CommentedDetailView):
         context['og_image'] = self.object.og_image or metadata[1]
         context['enable_comments'] = settings.DMOJ_ENABLE_COMMENTS
         context['enable_social'] = settings.DMOJ_ENABLE_SOCIAL
-
+        context['is_subscribed'] = self.object.subscribers.filter(id=self.request.user.id).exists()
+        
         return context
 
     def get_object(self, queryset=None):
@@ -117,3 +121,15 @@ class PostView(TitleMixin, CommentedDetailView):
         if not post.can_see(self.request.user):
             raise Http404()
         return post
+
+@require_POST
+@login_required
+def toggle_subscription(request, id):
+    post = get_object_or_404(BlogPost, id=id)
+
+    if request.user in post.subscribers.all():
+        post.subscribers.remove(request.user)
+        return JsonResponse({'state': 'unsubscribed'})
+    else:
+        post.subscribers.add(request.user)
+        return JsonResponse({'state': 'subscribed'})

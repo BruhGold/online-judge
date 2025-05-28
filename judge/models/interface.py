@@ -5,6 +5,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 
@@ -72,6 +73,7 @@ class BlogPost(models.Model):
     content = models.TextField(verbose_name=_('post content'))
     summary = models.TextField(verbose_name=_('post summary'), blank=True)
     og_image = models.CharField(verbose_name=_('OpenGraph image'), default='', max_length=150, blank=True)
+    subscribers = models.ManyToManyField(User, related_name='blog_subscriptions', verbose_name=_('subscribers'), blank=True)
 
     def __str__(self):
         return self.title

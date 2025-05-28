@@ -1,0 +1,35 @@
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('subscribe-btn');
+    if (!btn) return;
+
+    const postId = btn.dataset.postId;
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    btn.addEventListener('click', function () {
+        console.log(postId);
+        fetch(`/post/${postId}/toggle-subscription/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({"csrfmiddlewaretoken": csrftoken}),
+        })
+        .then(response => {
+            console.log("Response status:", response.status);
+            return response.json();
+        })
+        .then(data => {
+            if (data.state === 'subscribed') {
+                btn.textContent = 'Unsubscribe';
+                btn.className = "button-cancel";
+            } else if (data.state === 'unsubscribed') {
+                btn.textContent = 'Subscribe';
+                btn.className = "";
+            }
+        });
+        console.log("done");
+    });
+});
+</script>

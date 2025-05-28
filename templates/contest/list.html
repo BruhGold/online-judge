@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block js_media %}
+    {% include "contest/follow-ajax.html" %}
     <script src="{{ static('libs/featherlight/featherlight.min.js') }}" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -134,6 +135,14 @@
     {% endif %}
 {% endmacro %}
 
+{% macro contest_follow(contest) %}
+    <td>
+        <button id={{"follow-btn-" + contest.key}} onClick=followContest({{contest.key}}) style="margin: auto" class="{{ 'button-cancel' if contest.follow else '' }}">
+            {{ 'Unfollowed' if contest.follow else 'Follow' }}
+        </button>
+    </td>
+{% endmacro %}
+
 {% block body %}
     <div class="content-description">
         {% if active_participations %}
@@ -222,6 +231,9 @@
                 <thead>
                 <tr>
                     <th>{{ _('Contest') }}</th>
+                    {% if request.user.is_authenticated %}
+                        <th></th>
+                    {% endif %}
                 </tr>
                 </thead>
                 <tbody>
@@ -239,6 +251,9 @@
                                 {% endif %}
                             </div>
                         </td>
+                        {% if request.user.is_authenticated %}
+                            {{ contest_follow(contest) }}
+                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
