@@ -1,0 +1,29 @@
+<script>
+function followContest(contestKey) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const btn = document.getElementById(`follow-btn-${contestKey}`);
+    console.log(`follow-btn-${contestKey}`);
+    fetch(`/contest/${contestKey}/toggle-follow/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        console.log("Response status:", response.status);
+        return response.json();
+    })
+    .then(data => {
+        if (data.state === 'followed') {
+            btn.textContent = 'Unfollow';
+            btn.className = "button-cancel";
+        } else if (data.state === 'unfollowed') {
+            btn.textContent = 'Follow';
+            btn.className = "";
+        }
+    });
+    console.log("done");
+};
+</script>

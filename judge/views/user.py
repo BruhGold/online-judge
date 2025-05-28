@@ -578,14 +578,14 @@ class EmailChangeRequestView(LoginRequiredMixin, TitleMixin, FormView):
         }
         send_mail(
             context,
-            to_email=self.request.user.email,
+            to_email=[self.request.user.email],
             subject_template_name=self.notify_subject_template_name,
             email_template_name=self.notify_email_template_name,
             html_email_template_name=self.notify_html_email_template_name,
         )
         send_mail(
             context,
-            to_email=new_email,
+            to_email=[new_email],
             subject_template_name=self.activate_subject_template_name,
             email_template_name=self.activate_email_template_name,
             html_email_template_name=self.activate_html_email_template_name,

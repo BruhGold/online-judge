@@ -16,6 +16,7 @@ from judge.models.interface import BlogPost
 from judge.models.problem import Problem, Solution
 from judge.models.profile import Profile
 from judge.utils.cachedict import CacheDict
+from judge.utils.mail import send_mail
 
 __all__ = ['Comment', 'CommentLock', 'CommentVote']
 
@@ -41,6 +42,33 @@ class Comment(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['-time']
+
+    def save(self, *args, **kwargs):
+        super(Comment, self).save(*args, **kwargs)
+        if self.page.startswith("b:"):
+            try:
+                blog_post_id = int(self.page[2:])
+                blog_post = BlogPost.objects.filter(id=blog_post_id)
+                if blog_post.exists():
+                    blog_post = blog_post.first()
+                    subscribers = blog_post.subscribers.all()
+                    print("sub: ",subscribers)
+                    emails = [user.email for user in subscribers if user.email]
+                    print("emails: ",emails)
+                    context = {}
+                    send_mail.apply_async(kwargs={
+                        'context': context,
+                        'to_email': emails,
+                        'subject_template_name': "blog/notify_blog_subscriber_subject.txt",
+                        'email_template_name': "blog/notify_blog_subscriber_body.txt",
+                        'html_email_template_name': "blog/notify_blog_subscriber_body.html",
+                    })
+                    print("done")
+                else:
+                    print("No blog post found with id:", blog_post_id)
+            except Exception as e:
+                print("Error in blog post logic:", e)
+
 
     @classmethod
     def most_recent(cls, user, n, batch=None):

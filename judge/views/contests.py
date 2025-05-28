@@ -13,7 +13,7 @@ from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.models import BooleanField, Case, Count, F, FloatField, IntegerField, Max, Min, Q, Sum, Value, When
 from django.db.models.expressions import CombinedExpression, Exists, OuterRef
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.template.defaultfilters import date as date_filter
 from django.urls import reverse
@@ -26,13 +26,15 @@ from django.utils.translation import gettext as _, gettext_lazy
 from django.views.generic import ListView, TemplateView, View
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.list import BaseListView
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from icalendar import Calendar as ICalendar, Event
 from reversion import revisions
 
 from judge import event_poster as event
 from judge.comments import CommentedDetailView
 from judge.forms import ContestCloneForm
-from judge.models import Contest, ContestMoss, ContestParticipation, ContestProblem, ContestTag, \
+from judge.models import Contest, ContestMoss, ContestFollow, ContestParticipation, ContestProblem, ContestTag, \
     Problem, Profile, Submission
 from judge.tasks import run_moss
 from judge.utils.celery import redirect_to_task_status
@@ -46,7 +48,7 @@ from judge.utils.views import DiggPaginatorMixin, QueryStringSortMixin, SingleOb
 __all__ = ['ContestList', 'ContestDetail', 'ContestRanking', 'ContestJoin', 'ContestLeave', 'ContestCalendar',
            'ContestClone', 'ContestStats', 'ContestMossView', 'ContestMossDelete', 'contest_ranking_ajax',
            'ContestParticipationList', 'ContestParticipationDisqualify', 'get_contest_ranking_list',
-           'base_contest_ranking_list']
+           'base_contest_ranking_list', 'toggle_follow']
 
 
 def _find_contest(request, key, private_check=True):
@@ -136,6 +138,13 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
                 else:
                     active.append(participation)
                     present.remove(participation.contest)
+                    
+            user = self.request.user
+            followed_keys = set(
+                ContestFollow.objects.filter(user=user, contest__in=future).values_list('contest__key', flat=True)
+            )
+            for contest in future:
+                contest.follow = contest.key in followed_keys
 
         active.sort(key=attrgetter('end_time', 'key'))
         present.sort(key=attrgetter('end_time', 'key'))
@@ -150,7 +159,7 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
         context['search_query'] = self.search_query
         context.update(self.get_sort_context())
         context.update(self.get_sort_paginate_context())
-        print(context)
+
         return context
 
 
@@ -902,3 +911,23 @@ class ContestTagDetail(TitleMixin, ContestTagDetailAjax):
 
     def get_title(self):
         return _('Contest tag: %s') % self.object.name
+
+@require_POST
+@login_required
+def toggle_follow(request, contest):
+    object_instance = get_object_or_404(Contest, key=contest)
+    user = request.user
+
+    follow, created = ContestFollow.objects.get_or_create(user=user, contest=object_instance)
+
+    # if not follow: create new ContestFollow for linking user with contest and schedule a send_mail task with update_redis_key
+    if created:
+        follow.update_redis_key()
+        return JsonResponse({'state': 'followed'})
+    else:
+        # if followed: revoke any existing task and delete ContestFollow instance
+        if follow.task_id:
+            from celery import current_app
+            current_app.control.revoke(follow.task_id)
+        follow.delete()
+        return JsonResponse({'state': 'unfollowed'})

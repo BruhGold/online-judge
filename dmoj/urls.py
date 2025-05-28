@@ -199,6 +199,7 @@ urlpatterns = [
 
     path('contest/<str:contest>', include([
         path('', contests.ContestDetail.as_view(), name='contest_view'),
+        path('/toggle-follow/', contests.toggle_follow, name='contest_follow_toggle'),
         path('/moss', contests.ContestMossView.as_view(), name='contest_moss'),
         path('/moss/delete', contests.ContestMossDelete.as_view(), name='contest_moss_delete'),
         path('/clone', contests.ContestClone.as_view(), name='contest_clone'),
@@ -275,6 +276,7 @@ urlpatterns = [
 
     path('blog/', paged_list_view(blog.PostList, 'blog_post_list')),
     path('post/<int:id>-<slug:slug>', blog.PostView.as_view(), name='blog_post'),
+    path('post/<int:id>/toggle-subscription/', blog.toggle_subscription, name='post_subscribe_toggle'),
 
     path('license/<str:key>', license.LicenseDetail.as_view(), name='license'),
 

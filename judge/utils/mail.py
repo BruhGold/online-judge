@@ -6,6 +6,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.forms import ValidationError
 from django.template import loader
 from django.utils.translation import gettext
+from celery import shared_task
 
 
 bad_mail_regex: List[Pattern[str]] = list(map(re.compile, settings.BAD_MAIL_PROVIDER_REGEX))
@@ -20,6 +21,7 @@ def validate_email_domain(email: str) -> None:
 
 
 # Inspired by django.contrib.auth.forms.PasswordResetForm.send_mail
+@shared_task
 def send_mail(
     context: Dict[str, Any],
     *,
@@ -34,9 +36,11 @@ def send_mail(
     subject = ''.join(subject.splitlines())
     body = loader.render_to_string(email_template_name, context)
 
-    email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
+    email_message = EmailMultiAlternatives(subject, body, from_email, to_email)
+    
     if html_email_template_name is not None:
         html_email = loader.render_to_string(html_email_template_name, context)
         email_message.attach_alternative(html_email, 'text/html')
 
+    print("sending")
     email_message.send()

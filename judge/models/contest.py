@@ -6,15 +6,19 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 from jsonfield import JSONField
 from lupa import LuaRuntime
 from moss import MOSS_LANG_C, MOSS_LANG_CC, MOSS_LANG_JAVA, MOSS_LANG_PYTHON
+
+from celery import current_app
 
 from judge import contest_format
 from judge.models.problem import Problem
 from judge.models.profile import Organization, Profile
 from judge.models.submission import Submission
 from judge.ratings import rate_contest
+from judge.utils.mail import send_mail
 
 __all__ = ['Contest', 'ContestTag', 'ContestParticipation', 'ContestProblem', 'ContestSubmission', 'Rating']
 
@@ -23,6 +27,36 @@ class MinValueOrNoneValidator(MinValueValidator):
     def compare(self, a, b):
         return a is not None and b is not None and super().compare(a, b)
 
+class ContestFollow(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="contest_follow")
+    contest = models.ForeignKey("Contest", on_delete=models.CASCADE, related_name="followers")
+    task_id = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'contest')
+
+    def update_redis_key(self):
+        if self.task_id:
+            current_app.control.revoke(self.task_id)
+            self.task_id = None
+
+        start_time = self.contest.start_time
+        eta = start_time - timezone.timedelta(hours=1)
+
+        context = {}
+
+        if eta > timezone.now():
+            task = send_mail.apply_async(kwargs={
+                    'context': context,
+                    'to_email': [self.user.email],
+                    'subject_template_name': "blog/notify_blog_subscriber_subject.txt", # placeholder
+                    'email_template_name': "blog/notify_blog_subscriber_body.txt",
+                    'html_email_template_name': "blog/notify_blog_subscriber_body.html",
+                },
+                eta = eta
+            )
+            self.task_id = task.id
+        self.save()
 
 class ContestTag(models.Model):
     color_validator = RegexValidator('^#(?:[A-Fa-f0-9]{3}){1,2}$', _('Invalid colour.'))
@@ -175,6 +209,11 @@ class Contest(models.Model):
     points_precision = models.IntegerField(verbose_name=_('precision points'), default=3,
                                            validators=[MinValueValidator(0), MaxValueValidator(10)],
                                            help_text=_('Number of digits to round points to.'))
+
+    def save(self, *args, **kwargs):
+        super(Contest, self).save()
+        for follower in self.followers.all():
+            follower.update_redis_key()
 
     @cached_property
     def format_class(self):
