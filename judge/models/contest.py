@@ -49,9 +49,9 @@ class ContestFollow(models.Model):
             task = send_mail.apply_async(kwargs={
                     'context': context,
                     'to_email': [self.user.email],
-                    'subject_template_name': "blog/notify_blog_subscriber_subject.txt", # placeholder
-                    'email_template_name': "blog/notify_blog_subscriber_body.txt",
-                    'html_email_template_name': "blog/notify_blog_subscriber_body.html",
+                    'subject_template_name': "contest/email_subject.txt",
+                    'email_template_name': "contest/email_body.txt",
+                    'html_email_template_name': "contest/email_body.html",
                 },
                 eta = eta
             )
