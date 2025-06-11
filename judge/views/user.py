@@ -33,6 +33,8 @@ from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
 from reversion import revisions
 
+from rest_framework.views import APIView
+
 from judge.forms import CustomAuthenticationForm, DownloadDataForm, EmailChangeForm, ProfileForm, newsletter_id
 from judge.models import Profile, Submission
 from judge.performance_points import get_pp_breakdown
@@ -307,7 +309,7 @@ class UserPerformancePointsAjax(UserProblemsPage):
 class UserDataMixin:
     @cached_property
     def data_path(self):
-        return os.path.join(settings.DMOJ_USER_DATA_CACHE, '%s.zip' % self.request.profile.id)
+        return os.path.join(settings.DMOJ_USER_DATA_CACHE, '%s.zip' % self.request.user.profile.id)
 
     def dispatch(self, request, *args, **kwargs):
         if not settings.DMOJ_USER_DATA_DOWNLOAD or self.request.profile.mute:
@@ -356,6 +358,7 @@ class UserPrepareData(LoginRequiredMixin, UserDataMixin, TitleMixin, FormView):
     def form_valid(self, form):
         self.request.profile.data_last_downloaded = self._now
         self.request.profile.save()
+        print(json.dumps(form.cleaned_data))
         status = prepare_user_data.delay(self.request.profile.id, json.dumps(form.cleaned_data))
         cache.set(self.data_cache_key, status.id)
         return HttpResponseRedirect(self.build_task_url(status.id))
@@ -379,7 +382,7 @@ class UserPrepareData(LoginRequiredMixin, UserDataMixin, TitleMixin, FormView):
         return super().post(request, *args, **kwargs)
 
 
-class UserDownloadData(LoginRequiredMixin, UserDataMixin, View):
+class UserDownloadData(APIView, LoginRequiredMixin, UserDataMixin, View):
     def get(self, request, *args, **kwargs):
         if not os.path.exists(self.data_path):
             raise Http404()
@@ -387,7 +390,7 @@ class UserDownloadData(LoginRequiredMixin, UserDataMixin, View):
         response = HttpResponse()
 
         if hasattr(settings, 'DMOJ_USER_DATA_INTERNAL'):
-            url_path = '%s/%s.zip' % (settings.DMOJ_USER_DATA_INTERNAL, self.request.profile.id)
+            url_path = '%s/%s.zip' % (settings.DMOJ_USER_DATA_INTERNAL, self.request.user.profile.id)
         else:
             url_path = None
         add_file_response(request, response, url_path, self.data_path)
