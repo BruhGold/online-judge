@@ -1,0 +1,1 @@
+mariadb --user=dmoj --password='<mariadb user password>' dmoj < ~/online-judge/mariadb_scripts/delete_unactivated_user.sql
