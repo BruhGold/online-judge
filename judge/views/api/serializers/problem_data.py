@@ -5,6 +5,9 @@ from judge.utils.problem_data import ProblemDataCompiler, ProblemDataError
 import json
 
 class ProblemDataSerializer(serializers.ModelSerializer):
+    output_limit = serializers.IntegerField(required=False, allow_null=True)
+    output_prefix = serializers.IntegerField(required=False, allow_null=True)
+
     class Meta:
         model = ProblemData
         fields = [

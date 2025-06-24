@@ -634,6 +634,7 @@ class APISubmissionList(APIListView):
             'memory': submission.memory,
             'points': submission.points,
             'result': submission.result,
+            'problem_type': [ptype.full_name for ptype in submission.problem.types.all()],
             'contest': None if not submission.contest_object else {
                 'key': submission.contest_object.key,
                 'points': submission.contest.points,

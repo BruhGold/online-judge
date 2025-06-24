@@ -243,6 +243,48 @@ class UserAboutPage(UserPage):
 
         context['type_performance_data'] = mark_safe(json.dumps(type_stats))
 
+                # ➕ Recommend weakest problem type for practice
+        weakest_type = None
+        lowest_success_rate = 1.1  # higher than any possible rate
+
+        for type_name, stats in type_stats.items():
+            total = stats['AC'] + stats['nonAC']
+            if total == 0:
+                continue  # avoid division by zero
+            rate = stats['AC'] / total
+            if rate < lowest_success_rate:
+                lowest_success_rate = rate
+                weakest_type = type_name
+
+        if weakest_type:
+            context['type_performance_recommendation'] = (
+                f"You should focus more on <strong>{weakest_type}</strong> problems, "
+                f"where your success rate is only {lowest_success_rate:.0%}."
+            )
+
+            # Recommend up to 3 unsolved problems of the weakest type
+            solved_problem_ids = set(
+                s['problem'] for s in all_submissions if s['result'] == 'AC'
+            )
+
+            recommended_problems = (
+                Problem.objects
+                .filter(types__full_name=weakest_type, is_public=True)
+                .exclude(pk__in=solved_problem_ids)
+                .distinct()[:3]
+            )
+
+            context['problem_recommendations'] = [{
+                'name': p.name,
+                'url': reverse('problem_detail', args=(p.code,))
+            } for p in recommended_problems]
+        else:
+            context['type_performance_recommendation'] = None
+            context['problem_recommendations'] = []
+        
+        
+
+
         return context
 
 
