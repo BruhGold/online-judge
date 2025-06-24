@@ -1,10 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-from social_django.models import UserSocialAuth
-
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
+
+from social_django.models import UserSocialAuth
+
 from django.utils.translation import gettext_lazy as _
 from django.utils.functional import cached_property
 from django.utils import timezone
@@ -12,7 +14,7 @@ from django.core.cache import cache
 from django.conf import settings
 from django.urls import reverse
 from django.http import Http404
-from rest_framework import status
+
 
 import os
 import json
@@ -21,8 +23,7 @@ from judge.tasks import prepare_user_data
 from judge.utils.celery import task_status_by_id, task_status_url_by_id
 from judge.views.user import UserDataMixin
 
-from ..serializers.user import DownloadDataSerializer
-
+from ..serializers.user import DownloadDataSerializer, SingleUserCreateSerializer
 
 class UserDataDownloadAPIView(APIView, UserDataMixin):
     permission_classes = [IsAuthenticated]
@@ -119,23 +120,39 @@ class UserDataDownloadAPIView(APIView, UserDataMixin):
             "progress_url": self.build_task_url(task_result.id)
         }, status=status.HTTP_202_ACCEPTED)
 
-
+# API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
 class MoodleToDMOJUIDView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
 
     def post(self, request, *args, **kwargs):
-        provider = request.data.get("provider")
-        ids = request.data.get("id", [])
+        if not isinstance(request.data, dict):
+            return Response(
+                {"detail": "bad Payload"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        if not provider or not isinstance(ids, list):
-            return Response({"error": "Invalid request format"}, status=400)
-
-        result = {}
-        for uid in ids:
-            try:
-                usa = UserSocialAuth.objects.get(provider=provider, uid=uid)
-                result[uid] = usa.user.id
-            except UserSocialAuth.DoesNotExist:
-                result[uid] = "Not found"
-
-        return Response(result)
+        success = {}
+        errors = {}
+        print("1")
+        for moodle_uid, user_payload in request.data.items():
+            # Serializer similar to a form receive and validate the data
+            serializer = SingleUserCreateSerializer(
+                data=user_payload,
+                context={"provider": "moodle", "moodle_uid": moodle_uid},
+            )
+            print("2")
+            if serializer.is_valid():
+                print("3")
+                user = serializer.save()
+                print("6")
+                success[moodle_uid] = {
+                    "dmoj_uid": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                }
+            else:
+                print("4")
+                errors[moodle_uid] = serializer.errors
+        print("5")
+        status_code = status.HTTP_207_MULTI_STATUS if errors else status.HTTP_201_CREATED
+        return Response({"success": success, "errors": errors}, status=status_code)
