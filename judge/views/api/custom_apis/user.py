@@ -136,7 +136,7 @@ class MoodleToDMOJUIDView(APIView):
                 usa = UserSocialAuth.objects.get(provider=provider, uid=uid)
                 user = usa.user
                 try:
-                    profile_id = user.profile.id  # Assuming related_name is 'profile'
+                    profile_id = user.profile.id
                 except AttributeError:
                     profile_id = "Profile not found"
 
