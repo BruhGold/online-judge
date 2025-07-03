@@ -120,8 +120,10 @@ class UserDataDownloadAPIView(APIView, UserDataMixin):
             "progress_url": self.build_task_url(task_result.id)
         }, status=status.HTTP_202_ACCEPTED)
 
+# API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
+
 class MoodleToDMOJUIDView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
 
     def post(self, request, *args, **kwargs):
         provider = request.data.get("provider")
