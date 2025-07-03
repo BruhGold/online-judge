@@ -121,7 +121,39 @@ class UserDataDownloadAPIView(APIView, UserDataMixin):
         }, status=status.HTTP_202_ACCEPTED)
 
 # API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
+
 class MoodleToDMOJUIDView(APIView):
+    permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
+
+    def post(self, request, *args, **kwargs):
+        provider = request.data.get("provider")
+        ids = request.data.get("id", [])
+
+        if not provider or not isinstance(ids, list):
+            return Response({"error": "Invalid request format"}, status=400)
+
+        result = {}
+        for uid in ids:
+            try:
+                usa = UserSocialAuth.objects.get(provider=provider, uid=uid)
+                user = usa.user
+                try:
+                    profile_id = user.profile.id
+                except AttributeError:
+                    profile_id = "Profile not found"
+
+                result[uid] = {
+                    "user_id": user.id,
+                    "profile_id": profile_id,
+                }
+            except UserSocialAuth.DoesNotExist:
+                result[uid] = "Not found"
+
+        return Response(result)
+
+
+# API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
+class MoodleForceDMOJCreateView(APIView):
     permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
 
     def post(self, request, *args, **kwargs):

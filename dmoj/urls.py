@@ -269,7 +269,7 @@ urlpatterns = [
         path('problem/<str:problem>/test_data', api.custom_apis.APIProblemDataView.as_view()),
         path('problem/<str:problem>/submit', api.custom_apis.APIProblemSubmitView.as_view()),
         path('users', api.api_v2.APIUserList.as_view()),
-        path('users/create', api.custom_apis.MoodleToDMOJUIDView.as_view()),
+        path('users/create', api.custom_apis.MoodleForceDMOJCreateView.as_view()),
         path('user/download-data', api.custom_apis.UserDataDownloadAPIView.as_view()),
         path('user/<str:user>', api.api_v2.APIUserDetail.as_view()),
         path("moodle-to-dmoj/", api.custom_apis.MoodleToDMOJUIDView.as_view(), name="moodle-to-dmoj"),
