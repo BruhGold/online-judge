@@ -29,13 +29,9 @@ class APIProblemDataView(APIView, ProblemManagerMixin):
         })
 
         zipfile_exists = bool(problem_data.zipfile)
-        zipfile_url = None
-        if problem_data.zipfile:
-            zipfile_url = request.build_absolute_uri(problem_data.zipfile.url)
 
         return Response({
             "zipfile_exists": zipfile_exists,
-            "zipfile_download_url": zipfile_url,
             "data": serializer.data
         })
 
