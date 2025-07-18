@@ -14,6 +14,7 @@ from django.core.cache import cache
 from django.conf import settings
 from django.urls import reverse
 from django.http import Http404
+from django.contrib.auth.models import User
 
 
 import os
@@ -123,6 +124,49 @@ class UserDataDownloadAPIView(APIView, UserDataMixin):
 # API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
 
 class MoodleToDMOJUIDView(APIView):
+    # permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
+
+    def post(self, request, *args, **kwargs):
+        provider = request.data.get("provider")
+        ids = request.data.get("id", [])
+
+        if not provider or not isinstance(ids, list):
+            return Response({"error": "Invalid request format"}, status=400)
+
+        if request.user.is_staff:
+            # Admins can query multiple IDs
+            if not isinstance(ids, list):
+                return Response({"error": "Expected 'id' to be a list"}, status=400)
+        else:
+            # Non-admins can only query their own UID
+            try:
+                usa = UserSocialAuth.objects.get(user=request.user, provider=provider)
+                ids = [usa.uid]
+            except UserSocialAuth.DoesNotExist:
+                return Response({"error": "You are not linked."}, status=403)
+
+        result = {}
+        for uid in ids:
+            try:
+                usa = UserSocialAuth.objects.get(provider=provider, uid=uid)
+                user = usa.user
+                try:
+                    profile_id = user.profile.id
+                except AttributeError:
+                    profile_id = "Profile not found"
+
+                result[uid] = {
+                    "user_id": user.id,
+                    "profile_id": profile_id,
+                }
+            except UserSocialAuth.DoesNotExist:
+                result[uid] = "Not found"
+
+        return Response(result)
+
+
+# API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
+class MoodleForceDMOJCreateView(APIView):
     permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
 
     def post(self, request, *args, **kwargs):
@@ -165,26 +209,36 @@ class MoodleForceDMOJCreateView(APIView):
 
         success = {}
         errors = {}
-        print("1")
         for moodle_uid, user_payload in request.data.items():
             # Serializer similar to a form receive and validate the data
             serializer = SingleUserCreateSerializer(
                 data=user_payload,
                 context={"provider": "moodle", "moodle_uid": moodle_uid},
             )
-            print("2")
             if serializer.is_valid():
-                print("3")
                 user = serializer.save()
-                print("6")
                 success[moodle_uid] = {
                     "dmoj_uid": user.id,
                     "username": user.username,
                     "email": user.email,
                 }
             else:
-                print("4")
                 errors[moodle_uid] = serializer.errors
-        print("5")
         status_code = status.HTTP_207_MULTI_STATUS if errors else status.HTTP_201_CREATED
         return Response({"success": success, "errors": errors}, status=status_code)
+
+    def delete(self,request, *args, **kwargs):
+        print(request.query_params)
+        moodle_user_ids = [
+            value for key, value in request.query_params.items()
+            if key.startswith("id[")
+        ]
+        print(moodle_user_ids)
+        social_users = UserSocialAuth.objects.filter(uid__in=moodle_user_ids)
+        print("social", social_users)
+        user_ids = [social_user.user_id for social_user in social_users]
+        print(user_ids)
+        users = User.objects.filter(id__in=user_ids)
+        print(users)
+        count, count_specific = users.delete()
+        return Response({"field del count": count, "specific": count_specific}, status=200)
