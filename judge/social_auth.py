@@ -68,7 +68,8 @@ class MoodleOAuth2(BaseOAuth2):
 
         try:
             return self.get_json(url)
-        except (HTTPError, ValueError, TypeError):
+        except (HTTPError, ValueError, TypeError) as e:
+            print(f"Exception occurred in user_data: {e}")
             return {}
 
     def get_user_details(self, response):

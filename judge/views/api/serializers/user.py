@@ -41,9 +41,9 @@ class DownloadDataSerializer(serializers.Serializer):
 
 class SingleUserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
-    email = serializers.CharField(required=False)
-    first_name = serializers.CharField(required=False)
-    last_name = serializers.CharField(required=False)
+    email = serializers.CharField(required=False, allow_null=True)
+    first_name = serializers.CharField(required=False, allow_null=True)
+    last_name = serializers.CharField(required=False, allow_null=True)
 
     class Meta:
         model = User
