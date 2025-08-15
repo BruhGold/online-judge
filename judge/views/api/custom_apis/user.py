@@ -167,7 +167,7 @@ class MoodleToDMOJUIDView(APIView):
 
 # API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
 class MoodleForceDMOJCreateView(APIView):
-    permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
+    # permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
 
     def post(self, request, *args, **kwargs):
         if not isinstance(request.data, dict):
