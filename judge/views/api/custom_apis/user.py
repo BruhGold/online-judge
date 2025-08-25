@@ -19,6 +19,7 @@ from django.contrib.auth.models import User
 
 import os
 import json
+import uuid
 
 from judge.tasks import prepare_user_data
 from judge.utils.celery import task_status_by_id, task_status_url_by_id
@@ -121,8 +122,7 @@ class UserDataDownloadAPIView(APIView, UserDataMixin):
             "progress_url": self.build_task_url(task_result.id)
         }, status=status.HTTP_202_ACCEPTED)
 
-# API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
-
+# API For admin to force create dmoj user and auto link with existing moodle account
 class MoodleToDMOJUIDView(APIView):
     # permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
 
@@ -164,41 +164,9 @@ class MoodleToDMOJUIDView(APIView):
 
         return Response(result)
 
-
-# API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
+# API For admin to force create dmoj user and auto link with existing moodle account
 class MoodleForceDMOJCreateView(APIView):
-    permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
-
-    def post(self, request, *args, **kwargs):
-        provider = request.data.get("provider")
-        ids = request.data.get("id", [])
-
-        if not provider or not isinstance(ids, list):
-            return Response({"error": "Invalid request format"}, status=400)
-
-        result = {}
-        for uid in ids:
-            try:
-                usa = UserSocialAuth.objects.get(provider=provider, uid=uid)
-                user = usa.user
-                try:
-                    profile_id = user.profile.id
-                except AttributeError:
-                    profile_id = "Profile not found"
-
-                result[uid] = {
-                    "user_id": user.id,
-                    "profile_id": profile_id,
-                }
-            except UserSocialAuth.DoesNotExist:
-                result[uid] = "Not found"
-
-        return Response(result)
-
-
-# API For admin to force create dmoj user and auto link with existing moodle account (no way to verify this yet)
-class MoodleForceDMOJCreateView(APIView):
-    permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
+    # permission_classes = [IsAdminUser]  # Check IsStaff = 1 or not
 
     def post(self, request, *args, **kwargs):
         if not isinstance(request.data, dict):
@@ -211,14 +179,17 @@ class MoodleForceDMOJCreateView(APIView):
         errors = {}
         for moodle_uid, user_payload in request.data.items():
             # Serializer similar to a form receive and validate the data
+            payload = dict(user_payload)
+            payload["username"] = f"{payload['username']}_{uuid.uuid4().hex[:8]}"
             serializer = SingleUserCreateSerializer(
-                data=user_payload,
+                data=payload,
                 context={"provider": "moodle", "moodle_uid": moodle_uid},
             )
             if serializer.is_valid():
                 user = serializer.save()
                 success[moodle_uid] = {
                     "dmoj_uid": user.id,
+                    "dmoj_profile_uid": user.profile.id,
                     "username": user.username,
                     "email": user.email,
                 }

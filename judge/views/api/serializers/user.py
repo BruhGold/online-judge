@@ -7,6 +7,7 @@ from django.db import transaction
 from social_django.models import UserSocialAuth
 from judge.models import Submission, Profile
 
+
 class DownloadDataSerializer(serializers.Serializer):
     comment_download = serializers.BooleanField(default=False, label=_('Download comments?'))
     submission_download = serializers.BooleanField(default=False, label=_('Download submissions?'))
@@ -44,10 +45,11 @@ class SingleUserCreateSerializer(serializers.ModelSerializer):
     email = serializers.CharField(required=False, allow_null=True)
     first_name = serializers.CharField(required=False, allow_null=True)
     last_name = serializers.CharField(required=False, allow_null=True)
+    is_admin = serializers.BooleanField(default=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'first_name', 'last_name']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'is_admin']
 
     def validate(self, data):
         moodle_uid = self.context.get("moodle_uid")
@@ -60,7 +62,7 @@ class SingleUserCreateSerializer(serializers.ModelSerializer):
         exists = UserSocialAuth.objects.filter(provider=provider, uid=moodle_uid).exists()
         if exists:
             raise serializers.ValidationError(
-                _("This moodle UID already exists in the UserSocialAuth table"),
+                _(f"This moodle UID already exists in the UserSocialAuth table"),
             )
 
         return data
@@ -74,9 +76,11 @@ class SingleUserCreateSerializer(serializers.ModelSerializer):
             password=validated_data.get('password', ''),
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', ''),
+            is_staff=validated_data.get('is_admin',''),
+            is_superuser=validated_data.get('is_admin',''),
         )
         # profile
-        Profile.objects.create(user=user)
+        Profile.objects.get_or_create(user=user)
         # social-auth
         provider = self.context['provider']
         uid = self.context['moodle_uid']

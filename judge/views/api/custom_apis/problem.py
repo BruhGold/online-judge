@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from ..serializers.problem import ProblemSerializer
 from judge.models.problem_data import ProblemData
+from judge.models.profile import Profile
 from ..permissions.problem import *
 import judge.views.api.api_v2 as api_v2
 
@@ -18,9 +19,11 @@ class APIProblemListView(APIView, api_v2.APIProblemList):
         data = request.data.copy()
 
         # forcing request sender as authour you can adjust this if you want to
-        user_id = request.user.pk
-        if 'authors' not in data or user_id not in data.get('authors', []):
-            data.setdefault('authors', []).append(user_id)
+      
+        profile_id = Profile.objects.filter(user_id=request.user.pk).first().id
+       
+        if 'authors' not in data or profile_id not in data.get('authors', []):
+            data.setdefault('authors', []).append(profile_id)
 
         serializer = ProblemSerializer(data=data, context={'user': request.user})
 
