@@ -6,7 +6,8 @@ class CanEditProblem(BasePermission):
         if request.method == "PUT" or request.method == "DELETE":
             return obj.is_editable_by(request.user)
         return True
-    
+
+# The 2 below are no longer in use
 class CanCreateProblem(BasePermission):
     def has_permission(self, request, view): 
         if request.method == "POST":
