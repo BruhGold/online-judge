@@ -10,7 +10,7 @@ from ..permissions.problem import *
 import judge.views.api.api_v2 as api_v2
 
 class APIProblemListView(APIView, api_v2.APIProblemList):
-    permission_classes = [IsAuthenticatedOrReadOnly, CanCreateProblem]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -40,7 +40,7 @@ class APIProblemListView(APIView, api_v2.APIProblemList):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class APIProblemDetailView(APIView, api_v2.APIProblemDetail):
-    permission_classes = [IsAuthenticatedOrReadOnly, CanDeleteProblem, CanEditProblem]
+    permission_classes = [IsAuthenticatedOrReadOnly, CanEditProblem]
     
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
